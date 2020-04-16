@@ -35,13 +35,7 @@ export const fetchHouses = () => {
 };
 
 export const createHouse = (name, category, rooms, price, location, wifi, dstv, images) => {
-    const createImageBase64Data = (image) => {
-        const imageUri = "data:image/png;base64, " + image.uri;
 
-        return imageUri
-
-    };
-    const image = createImageBase64Data(images[0]);
     const owner = 1;
     return async (dispatch) => {
         try {
