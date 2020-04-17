@@ -3,9 +3,6 @@ import {Image, StyleSheet, View} from "react-native";
 
 
 const ImageItem = (props) => {
-
-
-
     return (
         <View style={styles.imageContainer} key={props.index}>
             <Image source={{uri: props.image.uri}} style={styles.imageStyle}></Image>
