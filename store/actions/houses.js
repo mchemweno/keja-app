@@ -42,50 +42,58 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
         name: name,
         category: category,
         price: price,
-        location:
-            {
-                type: "point",
-                coordinates: [
-                    location.lng,
-                    location.lat
-                ]
-            },
         amenities: {
             wifi: wifi,
             Dstv: dstv,
         },
         owner: owner
     };
-
+    const pic = imageProcessor(images[0]);
     const formData = objectToFormData(myObj);
-
-    console.log(formData);
-
-    const imageName = images[0].uri.split('/').pop();
-    const imageType = imageName.split('.').pop();
-
-    let pic = {
-        name: imageName,
-        type: "image/png",
-        uri: images[0].uri
-    }
-
     formData.append("master_image", pic, pic.name);
+    formData.append("location", `{\n        \"type\": \"Point\",\n        \"coordinates\": [\n            ${location.lng},\n            ${location.lat}\n        ]\n    }`);
+
+    const imagesFormData = new FormData();
+    images.map((image, index) => {
+        const imagePic = imageProcessor(image);
+        imagesFormData.append("image" + index, imagePic, imagePic.name);
+    })
 
     return async (dispatch) => {
         try {
             const response = await fetch(`${domain}/houses/create_house`, {
                 method: 'POST',
                 headers: {
+                    'Accept': 'application/json',
                     'Content-Type': 'multipart/form-data',
                 },
                 body: formData
             })
 
-
             if (response.status != 201) {
-                console.log("hey");
                 throw new Error("Something went wrong");
+            }
+
+            const resData = await response.json();
+            const newHouseId = resData['id']
+
+            imagesFormData.append("houseId", newHouseId);
+            console.log(imagesFormData);
+
+            try {
+                const response = await fetch(`${domain}/houses/house_images`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    body: imagesFormData
+                });
+                if (response.status != 201) {
+                    throw new Error("Something went wrong");
+                }
+            } catch (err) {
+
             }
 
         } catch (err) {
@@ -94,3 +102,20 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
 
     }
 }
+
+
+const imageProcessor = (image) => {
+
+
+    const imageName = image.uri.split('/').pop();
+    const imageType = 'image/' + imageName.split('.').pop();
+
+    const pic = {
+        name: imageName,
+        type: imageType,
+        uri: image.uri
+    }
+
+    return pic
+
+};
