@@ -70,8 +70,8 @@ const ImageSelector = props => {
 
     return (
         <View style={styles.pickerContainer}>
-            <Button title={"Take Image"} color={Colors.primary} onPress={takeImageHandler}/>
-            <Button title={"Select From Gallery"} color={Colors.primary} onPress={selectImageFromGallery}/>
+            <Button title={"Take Image"} color={Colors.secondary} onPress={takeImageHandler}/>
+            <Button title={"Select From Gallery"} color={Colors.secondary} onPress={selectImageFromGallery}/>
         </View>
     )
 };

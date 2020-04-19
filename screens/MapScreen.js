@@ -11,6 +11,8 @@ import {fetchHouses} from "../store/actions/houses";
 import MapView from "react-native-map-clustering";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/CustomHeaderButtons";
+import MapViewDirections from "react-native-maps-directions";
+import vars from "../env";
 
 const MapScreen = (props) => {
 
@@ -43,6 +45,11 @@ const MapScreen = (props) => {
 
     const [userOriginCoordinates, setUserOriginCoordinates] = useState();
     const [userDestinationCoordinates, setUserDestinationCoordinates] = useState();
+    const [mapWidth, setMapWidth] = useState('99%')
+
+    const updateMapStyle = () => {
+        setMapWidth('100%')
+    }
 
     const [isSearch, setIsSearch] = useState(false);
 
@@ -164,18 +171,22 @@ const MapScreen = (props) => {
         })
     }, [fetchHousesScreen]);
 
+
     return (
         <SafeAreaView style={styles.screen}>
             {!!region &&
             <MapView
                 provider={"google"}
 
-                onMapReady={fetchHousesScreen}
+                onMapReady={() => {
+                    fetchHousesScreen();
+                    updateMapStyle()
+                }}
                 onPress={() => {
                     setUserDestinationCoordinates(null);
                     setIsSearch(false);
                 }}
-                style={StyleSheet.absoluteFillObject}
+                style={{...styles.mapStyle, width: mapWidth,}}
                 onRegionChangeComplete={region => {
                     setRegion((prevState) => {
                         return (
@@ -192,6 +203,8 @@ const MapScreen = (props) => {
 
                 region={region}
 
+                zoomEnabled={true}
+                zoomControlEnabled={true}
                 showsUserLocation={true}
                 userLocationPriority={'medium'}
                 userLocationUpdateInterval={3000}
@@ -206,7 +219,7 @@ const MapScreen = (props) => {
                     });
                 }}
 
-                clusterColor={Colors.primary}
+                clusterColor={Colors.secondary}
             >
                 {/*{userOriginCoordinates && userDestinationCoordinates &&*/}
                 {/*<MapViewDirections*/}
@@ -215,8 +228,6 @@ const MapScreen = (props) => {
                 {/*    destination={userDestinationCoordinates}*/}
                 {/*    strokeWidth={5}*/}
                 {/*    strokeColor={Colors.primary}*/}
-                {/*    precision={'high'}*/}
-                {/*    resetOnChange={false}*/}
                 {/*/>*/}
                 {/*}*/}
                 {houses && houses.map((house) => (
@@ -242,10 +253,20 @@ const MapScreen = (props) => {
                         title={house.properties.name}
                         tracksViewChanges={true}
 
-                    ><FontAwesome name={'home'} size={27} style={{color: Colors.primary}}/></MapMarker>
+                    ><FontAwesome name={'home'} size={27} style={{color: Colors.secondary}}/></MapMarker>
                 ))
                 }
             </MapView>}
+            <View style={styles.menuContainer}>
+                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+                    <Ionicons
+                        name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
+                        size={33}
+                        color={Colors.secondary}
+                    />
+
+                </TouchableOpacity>
+            </View>
             <View style={styles.searchContainer}>
                 {
                     isSearch ?
@@ -261,7 +282,7 @@ const MapScreen = (props) => {
                         >
                             <Ionicons
                                 name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
-                                size={33} color={Colors.primary}
+                                size={33} color={Colors.secondary}
                             />
                         </TouchableOpacity>
                 }
@@ -275,9 +296,22 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1
     },
+    mapStyle: {
+        flex: 1,
+        marginTop: 30
+    },
+    menuContainer: {
+        position: 'absolute',
+        top: 50,
+        left: 30,
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        elevation: 5,
+        borderRadius: 5,
+        padding: 10
+    },
     searchContainer: {
         position: 'absolute',
-        top: 30,
+        top: 110,
         left: 30,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         elevation: 5,

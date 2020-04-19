@@ -21,7 +21,6 @@ export const fetchHouses = () => {
             houses = resData.features;
 
             if (response.status != 200) {
-                console.log("hey")
                 throw new Error('Something went wrong')
             }
         } catch (err) {
@@ -42,16 +41,15 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
         name: name,
         category: category,
         price: price,
-        amenities: {
-            wifi: wifi,
-            Dstv: dstv,
-        },
         owner: owner
     };
+
     const pic = imageProcessor(images[0]);
     const formData = objectToFormData(myObj);
+
     formData.append("master_image", pic, pic.name);
     formData.append("location", `{\n        \"type\": \"Point\",\n        \"coordinates\": [\n            ${location.lng},\n            ${location.lat}\n        ]\n    }`);
+    formData.append("amenities", `{\"dstv\": ${dstv}, \"wifi\": ${wifi}}`);
 
     const imagesFormData = new FormData();
     images.map((image, index) => {
@@ -78,7 +76,6 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
             const newHouseId = resData['id']
 
             imagesFormData.append("houseId", newHouseId);
-            console.log(imagesFormData);
 
             try {
                 const response = await fetch(`${domain}/houses/house_images`, {

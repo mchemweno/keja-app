@@ -11,7 +11,7 @@ const CustomText = props => {
 
 const styles = StyleSheet.create({
     myTextStyles: {
-        color: Colors.primary
+
     }
 });
 

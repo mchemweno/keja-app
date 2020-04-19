@@ -10,7 +10,7 @@ const headerStyles = StyleSheet.create({
     },
     headerTitleStyle: {
         fontWeight: 'bold',
-        color: Colors.primary
+        color: Colors.secondary
     }
 });
 

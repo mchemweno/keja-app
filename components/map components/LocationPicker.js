@@ -74,12 +74,12 @@ const LocationPicker = props => {
                     margin: '1%'
                 }}
             >
-                {isFetching ? <ActivityIndicator size='large' color={Colors.primary}/> :
+                {isFetching ? <ActivityIndicator size='large' color={Colors.secondary}/> :
                     <CustomText>No Location Selected</CustomText>}
             </MapPreviewComponent>
             <View style={styles.buttonStyles}>
-                <Button title='Get Current Location' color={Colors.primary} onPress={getLocationHandler}/>
-                <Button title='Pick On Map' color={Colors.primary} onPress={selectOnMapLocationHandler}/>
+                <Button title='Get Current Location' color={Colors.secondary} onPress={getLocationHandler}/>
+                <Button title='Pick On Map' color={Colors.secondary} onPress={selectOnMapLocationHandler}/>
             </View>
 
             {mapViewVisibility &&

@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer, useState} from 'react';
+import React, {useCallback, useReducer, useState, useEffect} from 'react';
 import {ActivityIndicator, Alert, ScrollView, StyleSheet, View} from "react-native";
 import InputComponent from "../../components/input components/InputComponent";
 import {useDispatch, useSelector} from "react-redux";
@@ -83,12 +83,11 @@ const NewHouseScreen = props => {
                             inputChangeHandler('name', '', false);
                             inputChangeHandler('price', '', false);
                             inputChangeHandler('rooms', 0, true);
+                            setLocation(null);
+                            setImages([]);
                             setIsCreating(false);
                             props.navigation.goBack();
                         } catch (err) {
-                            inputChangeHandler('name', '', false);
-                            inputChangeHandler('price', '', false);
-                            inputChangeHandler('rooms', 0, true);
                             setIsCreating(false);
                             Alert.alert('Error', 'Something went wrong.Please try another time.');
                         }
@@ -110,8 +109,9 @@ const NewHouseScreen = props => {
     const [wifi, setWifi] = useState(false);
     const [category, setCategory] = useState(1);
     const [location, setLocation] = useState();
-    const [isCreating, setIsCreating] = useState(false)
     const [images, setImages] = useState([]);
+
+    const [isCreating, setIsCreating] = useState(false);
 
     let houseForFields;
 
@@ -148,10 +148,11 @@ const NewHouseScreen = props => {
         })
     }, [dispatchFromUseReducer])
 
-    let data = [
-        {value: false},
-        {value: true}
-    ];
+    useEffect(() => {
+    }, [dstv])
+
+
+
 
 
     return (
@@ -248,7 +249,7 @@ const NewHouseScreen = props => {
                     />
                 </View> :
                 <View style={{...styles.activityIndicatorContainer, height: height, width: width}}><ActivityIndicator
-                    size='large' color={Colors.primary}/></View>}
+                    size='large' color={Colors.secondary}/></View>}
         </ScrollView>
     )
 };

@@ -1,16 +1,14 @@
 import React from 'react';
 import {createStackNavigator} from "@react-navigation/stack";
-import MapScreen from "../screens/MapScreen";
-import {StyleSheet} from "react-native";
 import HouseDetailScreen from "../screens/HouseDetailsScreen";
-import Colors from "../constants/Colors";
 import headerStyles from "./headerStyles";
+import HomeScreen from "../screens/HomeScreen";
 
 
 const Stack = createStackNavigator();
 
 
-const HousesNavigator = () => {
+const HomeNavigator = () => {
     return (
         <Stack.Navigator
             screenOptions={{
@@ -19,11 +17,16 @@ const HousesNavigator = () => {
                 headerTitleStyle: headerStyles.headerTitleStyle
             }}
             headerMode={'float'}
+
         >
-            <Stack.Screen name='Map Screen' component={MapScreen}/>
+            <Stack.Screen
+                name='Home Screen'
+                component={HomeScreen}
+
+            />
             <Stack.Screen name='House Details Screen' component={HouseDetailScreen}/>
         </Stack.Navigator>
     )
 };
 
-export default HousesNavigator;
+export default HomeNavigator;

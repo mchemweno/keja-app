@@ -12,7 +12,9 @@ const DropboxComponent = props => {
                 style={{
                     flex: 1
                 }}
-                onValueChange={(itemValue, itemIndex) => props.onChange(itemValue)}
+                onValueChange={(itemValue, itemIndex) => {
+                    props.onChange(itemValue);
+                }}
                 mode={'dropdown'}
             >
                 <Picker.Item label={'True'} value={true}/>
