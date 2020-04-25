@@ -3,9 +3,11 @@ import {Platform, StyleSheet} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import MapNavigator from "./MapNavigator";
-import {FontAwesome5, Ionicons} from "@expo/vector-icons";
+import {FontAwesome5, FontAwesome} from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import HomeNavigator from "./HomeNavigator";
+import HomeScreen from "../screens/HomeScreen";
+import MapScreen from "../screens/MapScreen";
 
 const Tab = (Platform.OS === 'android') ? createMaterialBottomTabNavigator() : createBottomTabNavigator();
 
@@ -14,14 +16,13 @@ const TabNavigator = () => {
     return (
         <Tab.Navigator
             tabBarOptions={{
-                activeTintColor: Colors.secondaryColor,
-                inactiveTintColor: 'black',
-                style: styles.tabStyles
+                activeTintColor: Colors.mainColorMonochrome,
+                inactiveTintColor: Colors.mainColor,
             }}
 
             shifting={true}
-            activeColor={Colors.secondary}
-            inactiveColor={Colors.other}
+            activeColor={Colors.mainColor}
+            inactiveColor={Colors.grayShade2}
             initialRouteName={'Map'}
             barStyle={styles.tabStyles}
         >
@@ -32,23 +33,33 @@ const TabNavigator = () => {
                     tabBarIcon: (tabInfo) => {
                         return <FontAwesome5
                             name={"home"}
-                            size={25}
+                            size={20}
                             color={tabInfo.color}/>
-                    },
-                    tabBarColor: Colors.primaryColor
+                    }
                 }}
             />
             <Tab.Screen
                 name="Map"
-                component={MapNavigator}
+                component={MapScreen}
                 options={{
                     tabBarIcon: (tabInfo) => {
                         return <FontAwesome5
                             name={"map-marker-alt"}
-                            size={25}
+                            size={20}
                             color={tabInfo.color}/>
-                    },
-                    tabBarColor: Colors.primaryColor
+                    }
+                }}
+            />
+            <Tab.Screen
+                name="Ngwori"
+                component={HomeScreen}
+                options={{
+                    tabBarIcon: (tabInfo) => {
+                        return <FontAwesome
+                            name={"gear"}
+                            size={20}
+                            color={tabInfo.color}/>
+                    }
                 }}
             />
         </Tab.Navigator>
@@ -61,7 +72,7 @@ const styles = StyleSheet.create({
         fontFamily: 'open-sans-bold',
         borderTopStartRadius: 5,
         borderTopEndRadius: 5,
-        overflow: 'hidden'
+        overflow: 'hidden',
     }
 })
 

@@ -249,7 +249,7 @@ const NewHouseScreen = props => {
                     />
                 </View> :
                 <View style={{...styles.activityIndicatorContainer, height: height, width: width}}><ActivityIndicator
-                    size='large' color={Colors.secondary}/></View>}
+                    size='large' color={Colors.mainColor}/></View>}
         </ScrollView>
     )
 };

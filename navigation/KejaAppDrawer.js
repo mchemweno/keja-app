@@ -13,16 +13,23 @@ const KejaAppDrawer = () => {
         <Drawer.Navigator
             hideStatusBar={false}
             drawerStyle={{
-                marginTop: 30
+                marginTop: 30,
+                backgroundColor: Colors.grayShade1
             }}
 
             drawerContentOptions={{
-                activeTintColor: Colors.secondary,
-                inactiveTintColor: Colors.secondary,
+                activeTintColor: Colors.mainColor,
+                inactiveTintColor: Colors.mainColorMonochrome,
                 itemStyle: {margin: 2},
             }}
         >
-            <Drawer.Screen name={'Houses Tab'} component={TabNavigator}/>
+            <Drawer.Screen
+                name={'Houses Tab'}
+                component={TabNavigator}
+                options={{
+                    headerShown: false
+                }}
+            />
             <Drawer.Screen name={'Owner'} component={OwnerNavigator}/>
         </Drawer.Navigator>
     )

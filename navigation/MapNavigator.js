@@ -3,6 +3,7 @@ import {createStackNavigator} from "@react-navigation/stack";
 import MapScreen from "../screens/MapScreen";
 import HouseDetailScreen from "../screens/HouseDetailsScreen";
 import headerStyles from "./headerStyles";
+import TabNavigator from "./TabNavigator";
 
 
 const Stack = createStackNavigator();
@@ -19,15 +20,16 @@ const MapNavigator = () => {
             headerMode={'float'}
 
         >
-            <Stack.Screen
-                name='Map Screen'
-                component={MapScreen}
-                options={{
-                    headerShown: false
-                }}
-
+            <Stack.Screen name='Tab' component={TabNavigator}
+                          options={{
+                              headerShown: false,
+                          }}
             />
-            <Stack.Screen name='House Details Screen' component={HouseDetailScreen}/>
+            <Stack.Screen name='House Details Screen' component={HouseDetailScreen}
+                          options={{
+                              headerShown: false,
+                          }}
+            />
         </Stack.Navigator>
     )
 };

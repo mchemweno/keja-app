@@ -219,7 +219,7 @@ const MapScreen = (props) => {
                     });
                 }}
 
-                clusterColor={Colors.secondary}
+                clusterColor={Colors.myGrey}
             >
                 {/*{userOriginCoordinates && userDestinationCoordinates &&*/}
                 {/*<MapViewDirections*/}
@@ -253,20 +253,10 @@ const MapScreen = (props) => {
                         title={house.properties.name}
                         tracksViewChanges={true}
 
-                    ><FontAwesome name={'home'} size={27} style={{color: Colors.secondary}}/></MapMarker>
+                    ><FontAwesome name={'home'} size={27} style={{color: Colors.mainColor}}/></MapMarker>
                 ))
                 }
             </MapView>}
-            <View style={styles.menuContainer}>
-                <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
-                    <Ionicons
-                        name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
-                        size={33}
-                        color={Colors.secondary}
-                    />
-
-                </TouchableOpacity>
-            </View>
             <View style={styles.searchContainer}>
                 {
                     isSearch ?
@@ -282,7 +272,7 @@ const MapScreen = (props) => {
                         >
                             <Ionicons
                                 name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
-                                size={33} color={Colors.secondary}
+                                size={33} color={Colors.mainColor}
                             />
                         </TouchableOpacity>
                 }
@@ -304,23 +294,26 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 50,
         left: 30,
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        backgroundColor: Colors.grayShade1,
         elevation: 5,
-        borderRadius: 5,
-        padding: 10
+        height: '6%',
+        width: '12%'
     },
     searchContainer: {
         position: 'absolute',
-        top: 110,
+        top: 50,
         left: 30,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         elevation: 5,
-        borderRadius: 5
+        borderRadius: 5,
     },
     touchableOpacityStyle: {
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 10
+        padding: 10,
+        backgroundColor: Colors.grayShade1,
+        height: '100%',
+        width: '110%'
     }
 })
 

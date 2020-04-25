@@ -11,7 +11,7 @@ const CustomFontAwesomeHeaderButton = props => {
             {...props}
             IconComponent={FontAwesome}
             iconSize={23}
-            color={Colors.secondary}
+            color={Colors.mainColor}
         />
     )
 };
