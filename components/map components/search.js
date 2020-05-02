@@ -2,6 +2,7 @@ import React from 'react';
 import {GooglePlacesAutocomplete} from "react-native-google-places-autocomplete";
 import vars from "../../env";
 import {Dimensions, StyleSheet} from "react-native";
+import Colors from "../../constants/Colors";
 
 
 const Search = (props) => {
@@ -9,9 +10,9 @@ const Search = (props) => {
         <GooglePlacesAutocomplete
             placeholder='Search'
             minLength={3}
-            autoFocus={false}
-            returnKeyType={'search'}
-            keyboardAppearance={'light'}
+            autoFocus={true}
+            //returnKeyType={'search'}
+            // keyboardAppearance={'light'}
             listViewDisplayed='auto'
             fetchDetails={true}
             renderDescription={row => row.description}
@@ -35,10 +36,18 @@ const Search = (props) => {
 
             styles={{
                 textInputContainer: {
-                    backgroundColor: 'white',
+                    backgroundColor: Colors.backgroundColor
+                },
+                textInput: {
+                    width: '100%'
                 },
                 description: {
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
+                },
+                separator: {
+                    borderColor: Colors.mainColor,
+                    marginHorizontal: 5,
+                    backgroundColor: Colors.greyMonochromeLight
                 },
                 predefinedPlacesDescription: {
                     color: '#1faadb'
@@ -46,7 +55,15 @@ const Search = (props) => {
                 container: {
                     opacity: 0.7,
                     width: Dimensions.get('window').width / 1.2,
+                    borderRadius: 5,
+                    overflow: 'hidden',
+                    borderWidth: 0.2,
+                    borderColor: Colors.grey
                 },
+                row: {
+                },
+                listView: {
+                }
             }}
 
             nearbyPlacesAPI='GooglePlacesSearch'

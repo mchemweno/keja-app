@@ -34,7 +34,8 @@ const MapScreen = (props) => {
 
     const houses = useSelector(state => state.houses.houses)
 
-    const {width, height} = Dimensions.get('window');
+    const height = useSelector(state => state.uiReducer.height);
+    const width = useSelector(state => state.uiReducer.width);
 
     const aspectRatio = width / height;
 
@@ -219,7 +220,7 @@ const MapScreen = (props) => {
                     });
                 }}
 
-                clusterColor={Colors.myGrey}
+                clusterColor={Colors.mainColorMonochromeDark2}
             >
                 {/*{userOriginCoordinates && userDestinationCoordinates &&*/}
                 {/*<MapViewDirections*/}
@@ -253,7 +254,7 @@ const MapScreen = (props) => {
                         title={house.properties.name}
                         tracksViewChanges={true}
 
-                    ><FontAwesome name={'home'} size={27} style={{color: Colors.mainColor}}/></MapMarker>
+                    ><FontAwesome name={'home'} size={27} style={{color: Colors.mainColorMonochromeDark2}}/></MapMarker>
                 ))
                 }
             </MapView>}
@@ -290,30 +291,23 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 30
     },
-    menuContainer: {
-        position: 'absolute',
-        top: 50,
-        left: 30,
-        backgroundColor: Colors.grayShade1,
-        elevation: 5,
-        height: '6%',
-        width: '12%'
-    },
     searchContainer: {
         position: 'absolute',
         top: 50,
         left: 30,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         elevation: 5,
-        borderRadius: 5,
+        borderRadius: 3,
+        overflow: 'hidden',
+        borderWidth: 0.2,
+        borderColor: Colors.mainColor
     },
     touchableOpacityStyle: {
         justifyContent: 'center',
         alignItems: 'center',
         padding: 10,
-        backgroundColor: Colors.grayShade1,
-        height: '100%',
-        width: '110%'
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
+        flex: 1
     }
 })
 

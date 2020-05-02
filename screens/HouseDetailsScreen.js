@@ -52,24 +52,22 @@ const HouseDetailScreen = props => {
 
                     dotColor={Colors.mainColor}
                     sliderBoxHeight={350}
-                    inactiveDotColor={'#808080'}
+                    inactiveDotColor={Colors.grey}
 
                     ImageComponentStyle={{width: '100%'}}
                 />
             </View>
             <Card style={{marginTop:5, paddingBottom: 10}}>
+                <View style={styles.priceCard}>
+                    <CustomText style={styles.priceText}>Ksh.{house.properties.price}</CustomText>
+                </View>
                 <View style={styles.nameOwnerCard}>
                     <View style={styles.nameCard}>
-                        <CustomText style={styles.nameLabel}>Name</CustomText>
                         <CustomText style={styles.nameText}>{house.properties.name}</CustomText>
                     </View>
                     <View style={styles.ownerCard}>
-                        <CustomText style={styles.nameLabel}>Owner</CustomText>
+                        <CustomText style={styles.label}>Owner</CustomText>
                     </View>
-                </View>
-                <View style={styles.priceCard}>
-                    <CustomText style={styles.label}>Price</CustomText>
-                    <CustomText style={styles.priceText}>Ksh.{house.properties.price}</CustomText>
                 </View>
                 <View style={styles.amenitiesCard}>
                     <CustomText style={styles.label}>Amenities</CustomText>
@@ -105,60 +103,55 @@ const styles = StyleSheet.create({
     screen: {
         flex: 1,
         marginTop: 30,
-        backgroundColor: '#c3c3c3'
+        backgroundColor: Colors.greyMonochromeLight2
     },
     priceText: {
         fontSize: 20,
-        color: Colors.myBlack,
+        color: Colors.black,
         marginHorizontal: 15
     },
     label: {
-        fontSize: 15,
-        color: Colors.myGrey,
-        marginHorizontal: 5
-    },
-    nameLabel: {
-        fontSize: 15,
-        color: Colors.myGrey,
+        fontSize: 14,
+        color: Colors.mainColor,
         marginHorizontal: 5
     },
     amenitiesText: {
-        fontSize: 15,
-        color: Colors.myBlack,
+        fontSize: 16,
+        color: Colors.black,
         marginHorizontal: 15
     },
     nameText: {
-        fontSize: 20,
-        color: Colors.myBlack,
-        marginHorizontal: 15
+        fontSize: 16,
+        color: Colors.black,
+        marginHorizontal: 25
     },
     imageSliderStyle: {
         marginBottom: 5
     },
     amenitiesCard: {
         borderBottomWidth: 0.5,
-        borderColor: Colors.mainColorMonochrome,
-        paddingVertical: 5
+        borderColor: Colors.greyMonochromeLight2,
+        paddingVertical: 5,
+        marginHorizontal: 5
     },
     mapPreviewContainer: {
         flex: 2,
         borderBottomWidth: 0.5,
-        borderColor: Colors.mainColorMonochrome,
+        borderColor: Colors.greyMonochromeLight2,
         paddingVertical: 10,
+        marginHorizontal: 5
     },
     priceCard: {
         paddingVertical: 5,
-        borderBottomWidth: 0.2,
-        borderColor: Colors.mainColorMonochrome,
-        flexDirection: 'row'
+        flexDirection: 'row',
     },
-    nameCard: {},
     nameOwnerCard: {
         paddingVertical: 5,
         borderBottomWidth: 0.5,
-        borderColor: Colors.mainColorMonochrome,
+        borderColor: Colors.greyMonochromeLight2,
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginHorizontal: 5
     },
     ownerCard: {
         marginRight: 5

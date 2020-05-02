@@ -22,9 +22,18 @@ const HomeNavigator = () => {
             <Stack.Screen
                 name='Home Screen'
                 component={HomeScreen}
+                options={{
+                    headerShown: false,
+                }}
 
             />
-            <Stack.Screen name='House Details Screen' component={HouseDetailScreen}/>
+            <Stack.Screen
+                name='House Details Screen'
+                component={HouseDetailScreen}
+                options={{
+                    headerShown: false,
+                }}
+            />
         </Stack.Navigator>
     )
 };

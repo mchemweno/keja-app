@@ -2,7 +2,6 @@ import React from 'react';
 import {Platform, StyleSheet} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import MapNavigator from "./MapNavigator";
 import {FontAwesome5, FontAwesome} from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import HomeNavigator from "./HomeNavigator";
@@ -16,13 +15,13 @@ const TabNavigator = () => {
     return (
         <Tab.Navigator
             tabBarOptions={{
-                activeTintColor: Colors.mainColorMonochrome,
-                inactiveTintColor: Colors.mainColor,
+                activeTintColor: Colors.mainColor,
+                inactiveTintColor: Colors.mainColorMonochromeLight,
             }}
 
             shifting={true}
             activeColor={Colors.mainColor}
-            inactiveColor={Colors.grayShade2}
+            inactiveColor={Colors.greyMonochromeLight}
             initialRouteName={'Map'}
             barStyle={styles.tabStyles}
         >
