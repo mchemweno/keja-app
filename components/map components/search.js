@@ -8,11 +8,11 @@ import Colors from "../../constants/Colors";
 const Search = (props) => {
     return (
         <GooglePlacesAutocomplete
-            placeholder='Search'
-            minLength={3}
+            placeholder={'Location?'}
+            minLength={2}
             autoFocus={true}
-            //returnKeyType={'search'}
-            // keyboardAppearance={'light'}
+            returnKeyType={'search'}
+            keyboardAppearance={'light'}
             listViewDisplayed='auto'
             fetchDetails={true}
             renderDescription={row => row.description}
@@ -54,10 +54,9 @@ const Search = (props) => {
                 },
                 container: {
                     opacity: 0.7,
-                    width: Dimensions.get('window').width / 1.2,
+                    ...props.container,
                     borderRadius: 5,
                     overflow: 'hidden',
-                    borderWidth: 0.2,
                     borderColor: Colors.grey
                 },
                 row: {

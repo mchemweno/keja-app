@@ -1,9 +1,8 @@
 import {createDrawerNavigator} from "@react-navigation/drawer";
-import MapNavigator from "./MapNavigator";
 import React from "react";
 import Colors from "../constants/Colors";
 import OwnerNavigator from "./OwnerNavigator";
-import TabNavigator from "./TabNavigator";
+import MainNavigator from "./MainNavigator";
 
 
 const Drawer = createDrawerNavigator();
@@ -14,22 +13,16 @@ const KejaAppDrawer = () => {
             hideStatusBar={false}
             drawerStyle={{
                 marginTop: 30,
-                backgroundColor: Colors.grayShade1
+                backgroundColor: Colors.backgroundColor
             }}
 
             drawerContentOptions={{
                 activeTintColor: Colors.mainColor,
-                inactiveTintColor: Colors.mainColorMonochrome,
-                itemStyle: {margin: 2},
+                inactiveTintColor: Colors.mainColorMonochromeLight,
+
             }}
         >
-            <Drawer.Screen
-                name={'Houses Tab'}
-                component={TabNavigator}
-                options={{
-                    headerShown: false
-                }}
-            />
+            <Drawer.Screen name={'Houses'} component={MainNavigator}/>
             <Drawer.Screen name={'Owner'} component={OwnerNavigator}/>
         </Drawer.Navigator>
     )

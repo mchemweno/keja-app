@@ -1,41 +1,22 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Dimensions, SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useState} from 'react';
+import {Alert, SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
 import * as Permissions from "expo-permissions";
 import * as Location from 'expo-location';
 import {FontAwesome, Ionicons} from "@expo/vector-icons";
 import Search from "../components/map components/search";
 import Colors from "../constants/Colors";
 import MapMarker from "react-native-maps/lib/components/MapMarker";
-import {useDispatch, useSelector} from "react-redux";
-import {fetchHouses} from "../store/actions/houses";
+import {useSelector} from "react-redux";
 import MapView from "react-native-map-clustering";
-import {HeaderButtons, Item} from "react-navigation-header-buttons";
-import CustomHeaderButton from "../components/CustomHeaderButtons";
-import MapViewDirections from "react-native-maps-directions";
-import vars from "../env";
 
 const MapScreen = (props) => {
-
-    props.navigation.setOptions({
-        title: 'Houses',
-        headerLeft: () => (
-            <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                <Item
-                    title={'Menu'}
-                    iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
-                    onPress={() => {
-                        props.navigation.openDrawer()
-                    }}/>
-            </HeaderButtons>
-        )
-    });
-
-    const dispatch = useDispatch();
 
     const houses = useSelector(state => state.houses.houses)
 
     const height = useSelector(state => state.uiReducer.height);
     const width = useSelector(state => state.uiReducer.width);
+
+    const orientation = height > width ? 'portrait' : 'landscape';
 
     const aspectRatio = width / height;
 
@@ -44,23 +25,35 @@ const MapScreen = (props) => {
 
     const [region, setRegion] = useState();
 
-    const [userOriginCoordinates, setUserOriginCoordinates] = useState();
-    const [userDestinationCoordinates, setUserDestinationCoordinates] = useState();
+
     const [mapWidth, setMapWidth] = useState('99%')
 
     const updateMapStyle = () => {
         setMapWidth('100%')
     }
 
-    const [isSearch, setIsSearch] = useState(false);
+    const [isSearch, setIsSearch] = useState(true);
 
-    const [refreshing, setRefreshing] = React.useState(false);
-    const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
 
-        fetchHousesScreen().then(() => setRefreshing(false));
-    }, [refreshing]);
+    const setIsSearchHandler = () => {
+        setIsSearch(prevState => !prevState)
+    };
 
+
+    const setRegionHandler = (lat, lng, latDelta) => {
+        const lngDelta = latDelta * aspectRatio;
+        setRegion(prevState => {
+            return {
+                ...prevState,
+                latitude: lat,
+                longitude: lng,
+                latitudeDelta: latDelta,
+                longitudeDelta: lngDelta
+
+
+            }
+        })
+    };
 
     const verifyPermissions = async () => {
         const result = await Permissions.askAsync(Permissions.LOCATION);
@@ -127,64 +120,27 @@ const MapScreen = (props) => {
 
     };
 
-    const setIsSearchHandler = () => {
-        setIsSearch(prevState => !prevState)
-    };
-
-
-    const setRegionHandler = (lat, lng, latDelta) => {
-        const lngDelta = latDelta * aspectRatio;
-        setRegion(prevState => {
-            return {
-                ...prevState,
-                latitude: lat,
-                longitude: lng,
-                latitudeDelta: latDelta,
-                longitudeDelta: lngDelta
-
-
-            }
-        })
-    };
-
-    const fetchHousesScreen = useCallback(async () => {
-        try {
-            await dispatch(fetchHouses());
-        } catch (err) {
-            Alert.alert('Error', err.message)
-        }
-    }, [dispatch]);
-
 
     useEffect(() => {
         getLocationHandler().catch(err => {
-            Alert.alert('Disclaimer', "Make sure your gps and data are turned on")
+            Alert.alert('Error', "Make sure your gps and data are turned on")
         });
 
     }, []);
 
-    useEffect(() => {
-        const unsubscribe = props.navigation.addListener('focus', () => {
-            fetchHousesScreen();
-        });
-        return (() => {
-            unsubscribe();
-        })
-    }, [fetchHousesScreen]);
-
 
     return (
         <SafeAreaView style={styles.screen}>
-            {!!region &&
+            {region &&
             <MapView
                 provider={"google"}
 
+                region={region}
+
                 onMapReady={() => {
-                    fetchHousesScreen();
                     updateMapStyle()
                 }}
                 onPress={() => {
-                    setUserDestinationCoordinates(null);
                     setIsSearch(false);
                 }}
                 style={{...styles.mapStyle, width: mapWidth,}}
@@ -202,7 +158,7 @@ const MapScreen = (props) => {
                     });
                 }}
 
-                region={region}
+
 
                 zoomEnabled={true}
                 zoomControlEnabled={true}
@@ -213,24 +169,10 @@ const MapScreen = (props) => {
                 showsMyLocationButton={true}
                 loadingEnabled={true}
 
-                onUserLocationChange={(data) => {
-                    setUserOriginCoordinates({
-                        latitude: data.nativeEvent.coordinate.latitude,
-                        longitude: data.nativeEvent.coordinate.longitude,
-                    });
-                }}
 
                 clusterColor={Colors.mainColorMonochromeDark2}
             >
-                {/*{userOriginCoordinates && userDestinationCoordinates &&*/}
-                {/*<MapViewDirections*/}
-                {/*    apikey={vars.googleApiKey}*/}
-                {/*    origin={userOriginCoordinates}*/}
-                {/*    destination={userDestinationCoordinates}*/}
-                {/*    strokeWidth={5}*/}
-                {/*    strokeColor={Colors.primary}*/}
-                {/*/>*/}
-                {/*}*/}
+
                 {houses && houses.map((house) => (
                     <MapMarker
                         key={house.id}
@@ -239,12 +181,6 @@ const MapScreen = (props) => {
                             longitude: house.geometry.coordinates[0]
                         }}
 
-                        onPress={() => {
-                            setUserDestinationCoordinates({
-                                latitude: house.geometry.coordinates[1],
-                                longitude: house.geometry.coordinates[0]
-                            });
-                        }}
 
                         onCalloutPress={() => {
                             props.navigation.navigate('House Details Screen',
@@ -262,6 +198,9 @@ const MapScreen = (props) => {
                 {
                     isSearch ?
                         <Search
+                            container={{
+                                width: orientation === 'portrait' ? 300 : 700
+                            }}
                             setCoordinatesHandler={setRegionHandler}
                             setIsSearchHandler={setIsSearchHandler}
                         /> :

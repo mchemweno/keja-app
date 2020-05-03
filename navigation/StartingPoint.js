@@ -1,13 +1,12 @@
 import React, {useCallback, useEffect} from 'react';
 import {StyleSheet} from "react-native";
 import {NavigationContainer} from '@react-navigation/native'
-import KejaAppDrawer from "./KejaAppDrawer";
 import {setDimensions} from "../store/actions/ui";
 import {useDispatch} from "react-redux";
 import {Dimensions} from 'react-native'
-import HomeNavigator from "./HomeNavigator";
-import TabNavigator from "./TabNavigator";
-import MapNavigator from "./MapNavigator";
+import MainNavigator from "./MainNavigator";
+import KejaAppDrawer from "./KejaAppDrawer";
+
 
 
 const StartingPoint = props => {
@@ -30,7 +29,7 @@ const StartingPoint = props => {
 
     return (
         <NavigationContainer>
-           <MapNavigator/>
+           <KejaAppDrawer/>
         </NavigationContainer>
     )
 

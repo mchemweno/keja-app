@@ -57,7 +57,7 @@ const HouseDetailScreen = props => {
                     ImageComponentStyle={{width: '100%'}}
                 />
             </View>
-            <Card style={{marginTop:5, paddingBottom: 10}}>
+            <Card style={{marginTop: 5, paddingBottom: 10}}>
                 <View style={styles.priceCard}>
                     <CustomText style={styles.priceText}>Ksh.{house.properties.price}</CustomText>
                 </View>
@@ -88,10 +88,17 @@ const HouseDetailScreen = props => {
                 }}>
                     <CustomText style={styles.label}>Map</CustomText>
                     <View style={{flex: 1, margin: 5}}>
-                        <MapPreviewComponent location={{
-                            lat: house.geometry.coordinates[1],
-                            lng: house.geometry.coordinates[0]
-                        }}/>
+                        <MapPreviewComponent
+                            location={{
+                                lat: house.geometry.coordinates[1],
+                                lng: house.geometry.coordinates[0]
+                            }}
+                            onPress={() => {
+                                props.navigation.navigate('Single House Map Screen',
+                                    {house: house}
+                                )
+                            }}
+                        />
                     </View>
                 </View>
             </Card>
