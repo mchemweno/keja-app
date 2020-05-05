@@ -94,8 +94,8 @@ const MapScreen = (props) => {
             setRegion(prevState => {
                 return {
                     ...prevState,
-                    latitude: location.latitude,
-                    longitude: location.longitude,
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
                     latitudeDelta: latitude_delta,
                     longitudeDelta: longitude_delta
                 }
@@ -147,7 +147,6 @@ const MapScreen = (props) => {
             getLocationHandler().catch(err => {
                 Alert.alert('Error', "Make sure your gps and data are turned on", [{text: "OK", onPress: () => props.navigation.goBack()}])
             });
-            console.log(region);
         }
     }, []);
 
