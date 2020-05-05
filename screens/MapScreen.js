@@ -10,6 +10,8 @@ import {useSelector} from "react-redux";
 import MapView from "react-native-map-clustering";
 
 const MapScreen = (props) => {
+    const {nearByLocation} = props.route.params;
+
 
     const houses = useSelector(state => state.houses.houses)
 
@@ -23,7 +25,19 @@ const MapScreen = (props) => {
     const latitude_delta = 0.0072;
     const longitude_delta = latitude_delta * aspectRatio;
 
-    const [region, setRegion] = useState();
+
+    let nearByLocationMapScreen;
+    if (nearByLocation) {
+        const latDelta = nearByLocation.geometry.viewport.northeast.lat - nearByLocation.geometry.viewport.southwest.lat;
+        nearByLocationMapScreen = {
+            latitude: nearByLocation.geometry.location.lat,
+            longitude: nearByLocation.geometry.location.lng,
+            latitudeDelta: latDelta,
+            longitudeDelta: latDelta * aspectRatio
+        }
+    }
+
+    const [region, setRegion] = useState(nearByLocationMapScreen);
 
 
     const [mapWidth, setMapWidth] = useState('99%')
@@ -32,7 +46,7 @@ const MapScreen = (props) => {
         setMapWidth('100%')
     }
 
-    const [isSearch, setIsSearch] = useState(true);
+    const [isSearch, setIsSearch] = useState(nearByLocation ? false : true);
 
 
     const setIsSearchHandler = () => {
@@ -80,13 +94,18 @@ const MapScreen = (props) => {
             setRegion(prevState => {
                 return {
                     ...prevState,
-                    lat: location.latitude,
-                    lng: location.longitude
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    latitudeDelta: latitude_delta,
+                    longitudeDelta: longitude_delta
                 }
             });
 
         } catch (err) {
-            Alert.alert('Error', 'Make Sure Your GPS and Internet is Turned on.')
+            Alert.alert('Error', 'Make Sure Your GPS and Internet is Turned on.', [
+                    {text: "OK", onPress: () => props.navigation.goBack()}
+                ]
+            )
         }
 
 
@@ -104,6 +123,7 @@ const MapScreen = (props) => {
                 timeout: 5000,
                 accuracy: 6
             });
+
             setRegion(prevState => {
                 return {
                     ...prevState,
@@ -113,6 +133,7 @@ const MapScreen = (props) => {
                     longitudeDelta: longitude_delta
                 }
             });
+
         } catch (err) {
             await lastKnownPosition();
         }
@@ -122,11 +143,14 @@ const MapScreen = (props) => {
 
 
     useEffect(() => {
-        getLocationHandler().catch(err => {
-            Alert.alert('Error', "Make sure your gps and data are turned on")
-        });
-
+        if (nearByLocation===null) {
+            getLocationHandler().catch(err => {
+                Alert.alert('Error', "Make sure your gps and data are turned on", [{text: "OK", onPress: () => props.navigation.goBack()}])
+            });
+            console.log(region);
+        }
     }, []);
+
 
 
     return (
@@ -134,7 +158,6 @@ const MapScreen = (props) => {
             {region &&
             <MapView
                 provider={"google"}
-
                 region={region}
 
                 onMapReady={() => {
@@ -157,7 +180,6 @@ const MapScreen = (props) => {
                         )
                     });
                 }}
-
 
 
                 zoomEnabled={true}
@@ -218,6 +240,7 @@ const MapScreen = (props) => {
                 }
             </View>
         </SafeAreaView>
+
 
     )
 };

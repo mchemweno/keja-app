@@ -16,10 +16,3 @@ export default {
 
 
 }
-
-// mainColorMonochrome2:,
-// mainColorMonochrome3:,
-// ComplementaryColor:,
-// myBlack:,
-// myGrey:
-//

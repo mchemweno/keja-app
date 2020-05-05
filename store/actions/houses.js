@@ -3,7 +3,9 @@ import {objectToFormData} from "object-to-formdata";
 export const FETCH_HOUSES = 'FETCH_HOUSES';
 export const CREATE_HOUSE = 'CREATE_HOUSE';
 
-const domain = 'https://keja-app-backend.herokuapp.com';
+
+
+export const domain = 'https://keja-app-backend.herokuapp.com';
 
 
 export const fetchHouses = () => {
@@ -23,14 +25,14 @@ export const fetchHouses = () => {
             if (response.status != 200) {
                 throw new Error('Something went wrong')
             }
+
+            dispatch({
+                type: FETCH_HOUSES,
+                houses: houses
+            })
         } catch (err) {
             return err
         }
-
-        dispatch({
-            type: FETCH_HOUSES,
-            houses: houses
-        })
 
     }
 };
@@ -90,7 +92,7 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
                     throw new Error("Something went wrong");
                 }
             } catch (err) {
-
+                throw err;
             }
 
         } catch (err) {
@@ -98,7 +100,8 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
         }
 
     }
-}
+};
+
 
 
 const imageProcessor = (image) => {

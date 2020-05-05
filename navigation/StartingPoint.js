@@ -6,6 +6,7 @@ import {useDispatch} from "react-redux";
 import {Dimensions} from 'react-native'
 import MainNavigator from "./MainNavigator";
 import KejaAppDrawer from "./KejaAppDrawer";
+import {fetchNearbyLocations} from "../store/actions/location";
 
 
 
@@ -21,6 +22,7 @@ const StartingPoint = props => {
     }, [dispatch]);
 
     useEffect(() => {
+        dispatch(fetchNearbyLocations(	0.514277,35.269779));
         Dimensions.addEventListener('change', updateLayout);
         return () => {
             Dimensions.removeEventListener('change', updateLayout)

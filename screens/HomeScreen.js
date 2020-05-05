@@ -10,20 +10,25 @@ import {
     View
 } from "react-native";
 import Colors from "../constants/Colors";
-import {Ionicons} from "@expo/vector-icons";
+import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 import CustomText from "../components/CustomText";
 import Card from "../components/Card";
 import {useDispatch, useSelector} from "react-redux";
 import {SliderBox} from "react-native-image-slider-box";
 import {fetchHouses} from "../store/actions/houses";
+import {fetchCategories} from "../store/actions/categories";
 
 
 const HomeScreen = props => {
     const height = useSelector(state => state.uiReducer.height);
     const width = useSelector(state => state.uiReducer.width);
 
-    const houses = useSelector(state => state.houses.houses)
+    const houses = useSelector(state => state.houses.houses);
     const houseMasterImages = [];
+
+    const nearByLocations = useSelector(state => state.nearByLocations.nearByLocations);
+
+    const categories = useSelector(state => state.categories.categories);
 
     const dispatch = useDispatch();
     const [currentImage, setCurrentImage] = useState(houseMasterImages[0]);
@@ -31,16 +36,21 @@ const HomeScreen = props => {
 
     let numColumns = (width > height) ? 2 : 2;
 
+
     const orientation = height > width ? 'portrait' : 'landscape';
 
-    const categories = [{id: 0, value: 'Juja'}, {id: 1, value: 'Nairobi'}, {id: 2, value: 'Westlands'}, {
-        id: 3,
-        value: 'Kileleshwa'
-    }, {id: 4, value: 'Kinoo'}, {id: 5, value: 'Thika'}];
 
     const fetchHousesScreen = useCallback(async () => {
         try {
             await dispatch(fetchHouses());
+        } catch (err) {
+            Alert.alert('Error', err.message)
+        }
+    }, [dispatch]);
+
+    const fetchCategoriesScreen = useCallback(async () => {
+        try {
+            await dispatch(fetchCategories());
         } catch (err) {
             Alert.alert('Error', err.message)
         }
@@ -51,6 +61,7 @@ const HomeScreen = props => {
             houseMasterImages.push(house.properties.master_image)
         });
     }
+    ;
 
     useEffect(() => {
         // const unsubscribe = props.navigation.addListener('focus', () => {
@@ -59,6 +70,7 @@ const HomeScreen = props => {
         // return (() => {
         //     unsubscribe();
         // })
+        fetchCategoriesScreen();
         fetchHousesScreen();
     }, [fetchHousesScreen]);
 
@@ -69,20 +81,13 @@ const HomeScreen = props => {
                 <View style={{flex: 1}}>
                     <ImageBackground
                         source={{uri: currentImage}}
-                        style={styles.imageBackground}
-                        blurRadius={10}
+                        style={{
+                            ...styles.imageBackground,
+                        }}
+                        imageStyle={styles.imageStyle}
+                        blurRadius={100}
                     >
                         <View style={styles.menuSearchContainer}>
-                            <View style={styles.menuContainer}>
-                                <TouchableOpacity
-                                    style={styles.menuTouchableOpacity}
-                                    onPress={() => {
-                                        props.navigation.openDrawer()
-                                    }}
-                                >
-                                    <Ionicons name={'md-menu'} size={33} color={Colors.mainColor}/>
-                                </TouchableOpacity>
-                            </View>
                             <Card style={{
                                 ...styles.searchCard,
                                 height: orientation === 'portrait' ? height / 20 : height / 10
@@ -90,7 +95,9 @@ const HomeScreen = props => {
                                 <View style={styles.searchContainer}>
                                     <TouchableOpacity
                                         onPress={() => {
-                                            props.navigation.navigate('Map Screen')
+                                            props.navigation.navigate('Map Screen', {
+                                                nearByLocation: null
+                                            })
                                         }}
                                         style={styles.searchOpacity}>
                                         <Ionicons
@@ -105,15 +112,29 @@ const HomeScreen = props => {
                                         }}
                                         placeholder={'Location?'}
                                         onFocus={() => {
-                                            props.navigation.navigate('Map Screen')
+                                            props.navigation.navigate('Map Screen', {
+                                                nearByLocation: null
+                                            })
                                         }}
                                     />
                                 </View>
                             </Card>
+                            <View style={styles.menuContainer}>
+                                <TouchableOpacity
+                                    style={styles.menuTouchableOpacity}
+                                    onPress={() => {
+                                        props.navigation.openDrawer()
+                                    }}
+                                >
+                                    <Ionicons name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} size={40}
+                                              color={Colors.mainColor}/>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         <Card style={{
                             ...styles.sliderCard,
-                            height: orientation === 'portrait' ? height / 4 : height / 2
+                            height: orientation === 'portrait' ? height / 5 : height / 2.5,
+
                         }}>
                             <SliderBox
                                 images={houseMasterImages}
@@ -129,7 +150,7 @@ const HomeScreen = props => {
                                     setCurrentImage(houseMasterImages[index])
                                 }}
                                 circleLoop
-                                autoplay
+                                autoplay={false}
                                 parentWidth={width}
 
                                 resizeMethod={'resize'}
@@ -146,7 +167,7 @@ const HomeScreen = props => {
 
                                 dotColor={Colors.mainColor}
                                 sliderBoxHeight={'100%'}
-                                inactiveDotColor={Colors.grey}
+                                inactiveDotColor={'white'}
 
                                 ImageComponentStyle={{width: '100%'}}
 
@@ -156,45 +177,86 @@ const HomeScreen = props => {
                             />
                         </Card>
                     </ImageBackground>
-                    <View style={{
-                        marginTop: 10,
-                        backgroundColor: 'white'
-                    }}>
-                        <View style={styles.locationsContainer}>
+
+                    <View style={styles.locationsContainer}>
+                        <View>
                             <View style={styles.locationsTextContainer}>
-                                <CustomText style={styles.locationsText}>Popular locations</CustomText>
+                                <FontAwesome5 name={'location-arrow'} size={16} color={Colors.complementary}/>
+                                <CustomText style={styles.locationsText}>Nearby locations</CustomText>
                             </View>
-                            <ScrollView
-                                horizontal={true}
-                                showsHorizontalScrollIndicator={false}
-                            >
-                                <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
-                                    {categories.map((category) => {
-                                        return (
-                                            <TouchableOpacity
-                                                key={category.id}
-                                                style={{
-                                                    ...styles.locationTouchableOpacity,
-                                                    height: orientation === 'portrait' ? height / 28 : height / 13
-                                                }}>
-                                                <CustomText style={styles.locationText}>{category.value}</CustomText>
-                                            </TouchableOpacity>
-                                        )
-                                    })}
-                                </View>
-                            </ScrollView>
+                            {nearByLocations.length > 0 ?
+                                <ScrollView
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                >
+                                    <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
+                                        {nearByLocations.map((nearByLocation) => {
+                                            return (
+                                                <TouchableOpacity
+                                                    key={nearByLocation.id}
+                                                    style={{
+                                                        ...styles.locationTouchableOpacity,
+                                                        height: orientation === 'portrait' ? height / 28 : height / 13
+                                                    }}
+                                                    onPress={() => {
+                                                        props.navigation.navigate('Map Screen', {
+                                                            nearByLocation: nearByLocation
+                                                        })
+                                                    }}
+                                                >
+                                                    <CustomText
+                                                        style={styles.locationText}>{nearByLocation.name}</CustomText>
+                                                </TouchableOpacity>
+                                            )
+                                        })}
+                                    </View>
+                                </ScrollView> : <CustomText>Make Sure your GPS is turned on to enjoy this feature</CustomText>}
                         </View>
                     </View>
-                    <View style={styles.highestRatedCardContainer}>
-                        <CustomText style={styles.highestRatedText}>Explore Categories</CustomText>
-                        <View>
-                            <View styles={{
-                                ...styles.highestRatedHouseCard
-                            }}>
-                                <CustomText>ngori</CustomText>
-                                <CustomText>ngori</CustomText>
-                                <CustomText>ngori</CustomText>
-                            </View>
+
+                    <View style={styles.exploreCardContainer}>
+                        <View style={{flexDirection: 'row'}}>
+                            <FontAwesome5 name={"binoculars"} size={16} color={Colors.complementary}/>
+                            <CustomText style={styles.exploreText}>Explore Categories</CustomText>
+                        </View>
+                        <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start'}}>
+                            {categories &&
+                            categories.map(category => {
+                                return (
+                                    <View
+                                        style={{elevation: 10}}
+                                        key={category.id}
+                                    >
+                                        <TouchableOpacity
+
+                                            style={{
+                                                ...styles.exploreCategoriesCard,
+                                                width: width / 2.5,
+                                                height: orientation === 'portrait' ? height / 8 : height / 3.5,
+                                            }}
+                                        >
+                                            <ImageBackground
+                                                style={styles.exploreImageBackground}
+                                                source={require('../media/keja_images.png')}
+                                            >
+                                                <CustomText
+                                                    style={{...styles.categoryText}}>{category.house_category}</CustomText>
+                                            </ImageBackground>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            })}
+
+                            <TouchableOpacity
+                                style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-end',
+                                    width: '100%'
+                                }}
+                            >
+                                <FontAwesome5 name={'arrow-right'} size={16} color={Colors.complementary}/>
+                                <CustomText style={styles.moreCategoriesText}>more categories</CustomText>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View> :
@@ -221,8 +283,9 @@ const styles = StyleSheet.create({
     imageBackground: {
         width: '100%',
         height: 210,
-        marginBottom: 60
+        marginBottom: 25,
     },
+    imageStyle: {},
     menuSearchContainer: {
         marginTop: 30,
         flexDirection: 'row',
@@ -233,22 +296,20 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         padding: 5,
-        borderRadius: 3,
+        borderRadius: 3
     },
     menuContainer: {
         flex: 2,
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
     searchCard: {
         marginHorizontal: 5,
-        borderRadius: 3,
-        borderWidth: 1,
-        borderColor: Colors.mainColorMonochromeLight2,
+        borderRadius: 50,
         flex: 12
     },
     searchContainer: {
         flexDirection: 'row',
-        flex: 6
+        flex: 6,
     },
     searchInput: {
         flex: 6,
@@ -264,27 +325,30 @@ const styles = StyleSheet.create({
     },
     locationsContainer: {
         marginTop: 5,
-        borderBottomWidth: 0.5,
         paddingBottom: 5,
-        marginHorizontal: 5,
-        borderColor: Colors.backgroundColor
+        paddingTop: 5,
+        marginHorizontal: 10,
+        backgroundColor: 'white',
+        borderRadius: 10
     },
     locationsTextContainer: {
-        justifyContent: 'center'
+        flexDirection: 'row',
+        marginHorizontal: 5,
+        alignItems: 'center'
     },
-    locationsCardContainer: {},
     locationsText: {
         fontSize: 16,
-        color: Colors.black
+        color: Colors.grey,
+        marginLeft: 5
     },
     sliderCard: {
-        borderRadius: 5,
+        borderRadius: 10,
         marginHorizontal: 10,
         overflow: 'hidden',
-        marginTop: 10
+        marginTop: 10,
     },
     locationsCard: {
-        marginHorizontal: 5,
+        marginHorizontal: 10,
         marginTop: 5,
         flexDirection: 'row',
 
@@ -304,16 +368,40 @@ const styles = StyleSheet.create({
         color: Colors.mainColor,
         fontSize: 16,
     },
-    highestRatedCardContainer: {
+    exploreCardContainer: {
         marginTop: 5,
         paddingHorizontal: 5,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+        marginHorizontal: 10,
+        borderRadius: 10,
+        paddingVertical: 5
     },
-    highestRatedText: {
-        fontSize: 16
+    exploreText: {
+        fontSize: 16,
+        color: Colors.grey,
+        marginLeft: 5
     },
-    highestRatedHouseCard: {
-
+    exploreCategoriesCard: {
+        borderRadius: 10,
+        overflow: 'hidden',
+        marginVertical: '5%',
+        marginHorizontal: '3.3%',
+        marginBottom: 5
+    },
+    exploreImageBackground: {
+        flex: 1,
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
+        paddingRight: '10%',
+        paddingBottom: '10%',
+    },
+    categoryText: {
+        fontSize: 16,
+        color: 'white'
+    },
+    moreCategoriesText: {
+        color: Colors.complementary,
+        marginLeft: 5
     }
 })
 
