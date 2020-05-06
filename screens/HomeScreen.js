@@ -40,17 +40,18 @@ const HomeScreen = props => {
     const orientation = height > width ? 'portrait' : 'landscape';
 
 
-    const fetchHousesScreen = useCallback(async () => {
+
+    const fetchCategoriesScreen = useCallback(async () => {
         try {
-            await dispatch(fetchHouses());
+            await dispatch(fetchCategories());
         } catch (err) {
             Alert.alert('Error', err.message)
         }
     }, [dispatch]);
 
-    const fetchCategoriesScreen = useCallback(async () => {
+    const fetchHousesScreen = useCallback(async () => {
         try {
-            await dispatch(fetchCategories());
+            await dispatch(fetchHouses());
         } catch (err) {
             Alert.alert('Error', err.message)
         }
@@ -70,9 +71,9 @@ const HomeScreen = props => {
         // return (() => {
         //     unsubscribe();
         // })
-        fetchCategoriesScreen();
         fetchHousesScreen();
-    }, [fetchHousesScreen]);
+        fetchCategoriesScreen();
+    }, []);
 
 
     return (
@@ -96,7 +97,8 @@ const HomeScreen = props => {
                                     <TouchableOpacity
                                         onPress={() => {
                                             props.navigation.navigate('Map Screen', {
-                                                nearByLocation: null
+                                                nearByLocation: null,
+                                                category: null
                                             })
                                         }}
                                         style={styles.searchOpacity}>
@@ -113,7 +115,8 @@ const HomeScreen = props => {
                                         placeholder={'Location?'}
                                         onFocus={() => {
                                             props.navigation.navigate('Map Screen', {
-                                                nearByLocation: null
+                                                nearByLocation: null,
+                                                category: null
                                             })
                                         }}
                                     />
@@ -200,7 +203,8 @@ const HomeScreen = props => {
                                                     }}
                                                     onPress={() => {
                                                         props.navigation.navigate('Map Screen', {
-                                                            nearByLocation: nearByLocation
+                                                            nearByLocation: nearByLocation,
+                                                            category: null
                                                         })
                                                     }}
                                                 >
@@ -233,6 +237,12 @@ const HomeScreen = props => {
                                                 ...styles.exploreCategoriesCard,
                                                 width: width / 2.5,
                                                 height: orientation === 'portrait' ? height / 8 : height / 3.5,
+                                            }}
+                                            onPress={() => {
+                                                props.navigation.navigate('Map Screen', {
+                                                    nearByLocation: null,
+                                                    category: category.id,
+                                                })
                                             }}
                                         >
                                             <ImageBackground

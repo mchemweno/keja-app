@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
 import * as Permissions from "expo-permissions";
 import * as Location from 'expo-location';
@@ -6,11 +6,15 @@ import {FontAwesome, Ionicons} from "@expo/vector-icons";
 import Search from "../components/map components/search";
 import Colors from "../constants/Colors";
 import MapMarker from "react-native-maps/lib/components/MapMarker";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import MapView from "react-native-map-clustering";
+import {fetchHouses} from "../store/actions/houses";
 
 const MapScreen = (props) => {
     const {nearByLocation} = props.route.params;
+    const {category} = props.route.params;
+
+    const dispatch = useDispatch()
 
 
     const houses = useSelector(state => state.houses.houses)
@@ -68,6 +72,21 @@ const MapScreen = (props) => {
             }
         })
     };
+
+    const fetchHousesScreen = useCallback(async () => {
+        try {
+            if (category){
+                await dispatch(fetchHouses());
+                console.log(category);
+            }
+            else {
+                await dispatch(fetchHouses());
+            }
+
+        } catch (err) {
+            Alert.alert('Error', err.message)
+        }
+    }, [dispatch]);
 
     const verifyPermissions = async () => {
         const result = await Permissions.askAsync(Permissions.LOCATION);
@@ -147,7 +166,9 @@ const MapScreen = (props) => {
             getLocationHandler().catch(err => {
                 Alert.alert('Error', "Make sure your gps and data are turned on", [{text: "OK", onPress: () => props.navigation.goBack()}])
             });
-        }
+        };
+
+        fetchHousesScreen();
     }, []);
 
 
