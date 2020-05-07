@@ -15,7 +15,7 @@ const categoriesReducer = (state = initialState, action) => {
                     categories: action.categories
                 }
             } else {
-                const intersection = state.categories.filter(categoriesswi => action.categories.includes(categories))
+                const intersection = state.categories.filter(categories=> action.categories.includes(categories))
                 return {
                     ...state,
                     categories: [...new Set([...intersection, ...action.categories])]

@@ -1,8 +1,9 @@
 import {objectToFormData} from "object-to-formdata";
 
 export const FETCH_HOUSES = 'FETCH_HOUSES';
+export const FETCH_HOUSES_CATEGORY = 'FETCH_HOUSES_CATEGORY';
+export const FETCH_HOUSES_RANDOM = 'FETCH_HOUSES_RANDOM';
 export const CREATE_HOUSE = 'CREATE_HOUSE';
-
 
 
 export const domain = 'https://keja-app-backend.herokuapp.com';
@@ -103,7 +104,6 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
 };
 
 
-
 const imageProcessor = (image) => {
 
 
@@ -118,4 +118,62 @@ const imageProcessor = (image) => {
 
     return pic
 
+};
+
+export const fetchHousesCategory = (id) => {
+    return async (dispatch) => {
+        let houses;
+        try {
+
+            const response = await fetch(`${domain}/houses/all_houses/categories/${id}`,
+                {
+                    method: 'GET'
+                })
+
+            const resData = await response.json();
+
+            houses = resData.features;
+
+            if (response.status != 200) {
+                throw new Error('Something went wrong')
+            }
+
+            dispatch({
+                type: FETCH_HOUSES_CATEGORY,
+                houses: houses
+            })
+        } catch (err) {
+            return err
+        }
+
+    }
+};
+
+export const fetchHousesRandom = () => {
+    return async (dispatch) => {
+        let houses;
+        try {
+
+            const response = await fetch(`${domain}/houses/all_houses/random`,
+                {
+                    method: 'GET'
+                })
+
+            const resData = await response.json();
+
+            houses = resData.features;
+
+            if (response.status != 200) {
+                throw new Error('Something went wrong')
+            }
+
+            dispatch({
+                type: FETCH_HOUSES_RANDOM,
+                houses: houses
+            })
+        } catch (err) {
+            return err
+        }
+
+    }
 };

@@ -1,9 +1,13 @@
 import React from 'react';
 import CustomText from "../CustomText";
 import {Picker, StyleSheet, View} from "react-native";
+import {useSelector} from "react-redux";
 
 
 const CategoryDropbox = props => {
+
+    const categories = useSelector(state => state.categories.categories);
+
     return (
         <View style={styles.dropDown}>
             <CustomText style={styles.customTextStyle}>{props.label}</CustomText>
@@ -15,7 +19,11 @@ const CategoryDropbox = props => {
                 onValueChange={(itemValue, itemIndex) => props.onChange(itemValue)}
                 mode={'dropdown'}
             >
-                <Picker.Item label={'Bedsitter'} value={1}/>
+                {categories.map(category=> {
+                    return (
+                        <Picker.Item key={category.id} label={category.house_category} value={category.id}/>
+                    )
+                })}
             </Picker>
         </View>
     )

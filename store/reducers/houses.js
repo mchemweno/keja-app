@@ -1,7 +1,9 @@
-import {FETCH_HOUSES} from "../actions/houses";
+import {FETCH_HOUSES, FETCH_HOUSES_CATEGORY, FETCH_HOUSES_RANDOM} from "../actions/houses";
 
 const initialState = {
-    houses: null
+    houses: null,
+    housesCategory: null,
+    housesRandom: null
 }
 
 
@@ -20,6 +22,17 @@ const housesReducer = (state = initialState, action) => {
                     ...state,
                     houses: [...new Set([...intersection, ...action.houses])]
                 }
+            }
+        case FETCH_HOUSES_CATEGORY:
+            return {
+                ...state,
+                housesCategory: action.houses
+            }
+
+        case FETCH_HOUSES_RANDOM:
+            return  {
+                ...state,
+                housesRandom: action.houses
             }
 
         default:

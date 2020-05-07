@@ -1,14 +1,13 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {Alert, SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
-import * as Permissions from "expo-permissions";
-import * as Location from 'expo-location';
 import {FontAwesome, Ionicons} from "@expo/vector-icons";
 import Search from "../components/map components/search";
 import Colors from "../constants/Colors";
 import MapMarker from "react-native-maps/lib/components/MapMarker";
 import {useDispatch, useSelector} from "react-redux";
 import MapView from "react-native-map-clustering";
-import {fetchHouses} from "../store/actions/houses";
+import {fetchHouses, fetchHousesCategory} from "../store/actions/houses";
+import {fetchCurrentLocation} from "../utilities/utilities";
 
 const MapScreen = (props) => {
     const {nearByLocation} = props.route.params;
@@ -17,7 +16,11 @@ const MapScreen = (props) => {
     const dispatch = useDispatch()
 
 
-    const houses = useSelector(state => state.houses.houses)
+    let houses = useSelector(state => state.houses.houses);
+
+    if (category) {
+        houses = useSelector(state => state.houses.housesCategory);
+    };
 
     const height = useSelector(state => state.uiReducer.height);
     const width = useSelector(state => state.uiReducer.width);
@@ -75,11 +78,9 @@ const MapScreen = (props) => {
 
     const fetchHousesScreen = useCallback(async () => {
         try {
-            if (category){
-                await dispatch(fetchHouses());
-                console.log(category);
-            }
-            else {
+            if (category) {
+                await dispatch(fetchHousesCategory(category.id));
+            } else {
                 await dispatch(fetchHouses());
             }
 
@@ -88,89 +89,18 @@ const MapScreen = (props) => {
         }
     }, [dispatch]);
 
-    const verifyPermissions = async () => {
-        const result = await Permissions.askAsync(Permissions.LOCATION);
-
-        if (result.status != 'granted') {
-            Alert.alert(
-                'Insufficient permissions',
-                'You need to grant location permissions'
-            );
-            return false
-        }
-        return true
-    };
-
-
-    const lastKnownPosition = async () => {
-        const hasPermissions = await verifyPermissions()
-        if (!hasPermissions) {
-            return;
-        }
-
-        try {
-            const location = await Location.getLastKnownPositionAsync();
-            setRegion(prevState => {
-                return {
-                    ...prevState,
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                    latitudeDelta: latitude_delta,
-                    longitudeDelta: longitude_delta
-                }
-            });
-
-        } catch (err) {
-            Alert.alert('Error', 'Make Sure Your GPS and Internet is Turned on.', [
-                    {text: "OK", onPress: () => props.navigation.goBack()}
-                ]
-            )
-        }
-
-
-    };
-
-    const getLocationHandler = async () => {
-        const hasPermissions = await verifyPermissions()
-        if (!hasPermissions) {
-            return;
-        }
-
-
-        try {
-            const location = await Location.getCurrentPositionAsync({
-                timeout: 5000,
-                accuracy: 6
-            });
-
-            setRegion(prevState => {
-                return {
-                    ...prevState,
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
-                    latitudeDelta: latitude_delta,
-                    longitudeDelta: longitude_delta
-                }
-            });
-
-        } catch (err) {
-            await lastKnownPosition();
-        }
-
-
-    };
-
-
     useEffect(() => {
-        if (nearByLocation===null) {
-            getLocationHandler().catch(err => {
-                Alert.alert('Error', "Make sure your gps and data are turned on", [{text: "OK", onPress: () => props.navigation.goBack()}])
-            });
+        if (nearByLocation === null) {
+            try {
+                fetchCurrentLocation(setRegion, latitude_delta, longitude_delta);
+            } catch (err) {
+                Alert.alert('Disclaimer', 'Make sure your GPS and data are turned on');
+                setIsSearch(true);
+            }
         };
 
         fetchHousesScreen();
     }, []);
-
 
 
     return (

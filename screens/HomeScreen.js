@@ -15,15 +15,17 @@ import CustomText from "../components/CustomText";
 import Card from "../components/Card";
 import {useDispatch, useSelector} from "react-redux";
 import {SliderBox} from "react-native-image-slider-box";
-import {fetchHouses} from "../store/actions/houses";
+import {fetchHouses, fetchHousesRandom} from "../store/actions/houses";
 import {fetchCategories} from "../store/actions/categories";
+import {fetchNearbyLocations} from "../store/actions/location";
+import {fetchCurrentLocation} from "../utilities/utilities";
 
 
 const HomeScreen = props => {
     const height = useSelector(state => state.uiReducer.height);
     const width = useSelector(state => state.uiReducer.width);
 
-    const houses = useSelector(state => state.houses.houses);
+    const houses = useSelector(state => state.houses.housesRandom);
     const houseMasterImages = [];
 
     const nearByLocations = useSelector(state => state.nearByLocations.nearByLocations);
@@ -32,13 +34,13 @@ const HomeScreen = props => {
 
     const dispatch = useDispatch();
     const [currentImage, setCurrentImage] = useState(houseMasterImages[0]);
+    const [region, setRegion] = useState(null);
 
 
     let numColumns = (width > height) ? 2 : 2;
 
 
     const orientation = height > width ? 'portrait' : 'landscape';
-
 
 
     const fetchCategoriesScreen = useCallback(async () => {
@@ -51,7 +53,7 @@ const HomeScreen = props => {
 
     const fetchHousesScreen = useCallback(async () => {
         try {
-            await dispatch(fetchHouses());
+            await dispatch(fetchHousesRandom());
         } catch (err) {
             Alert.alert('Error', err.message)
         }
@@ -64,6 +66,16 @@ const HomeScreen = props => {
     }
     ;
 
+    const fetchNearbyLocationsScreen = async () => {
+        try {
+            await fetchCurrentLocation(setRegion, 0, 0);
+            dispatch(fetchNearbyLocations(region.latitude, region.longitude));
+            console.log(region);
+        } catch (err) {
+            Alert.alert('Disclaimer', err.message)
+        }
+    };
+
     useEffect(() => {
         // const unsubscribe = props.navigation.addListener('focus', () => {
         //
@@ -73,6 +85,10 @@ const HomeScreen = props => {
         // })
         fetchHousesScreen();
         fetchCategoriesScreen();
+        fetchNearbyLocationsScreen().catch(err => {
+            Alert.alert('Disclaimer', err.message)
+        });
+
     }, []);
 
 
@@ -214,7 +230,8 @@ const HomeScreen = props => {
                                             )
                                         })}
                                     </View>
-                                </ScrollView> : <CustomText>Make Sure your GPS is turned on to enjoy this feature</CustomText>}
+                                </ScrollView> :
+                                <CustomText>Make Sure your GPS is turned on to enjoy this feature</CustomText>}
                         </View>
                     </View>
 
@@ -241,7 +258,7 @@ const HomeScreen = props => {
                                             onPress={() => {
                                                 props.navigation.navigate('Map Screen', {
                                                     nearByLocation: null,
-                                                    category: category.id,
+                                                    category: category,
                                                 })
                                             }}
                                         >
