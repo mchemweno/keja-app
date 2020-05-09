@@ -10,6 +10,7 @@ import {enableScreens} from "react-native-screens";
 import uiReducer from "./store/reducers/ui";
 import categoriesReducer from "./store/reducers/categories";
 import nearByLocationsReducer from "./store/reducers/location";
+import {composeWithDevTools}  from 'redux-devtools-extension'
 
 
 const rootReducer = combineReducers({
@@ -21,7 +22,7 @@ const rootReducer = combineReducers({
 
 enableScreens();
 
-const store = createStore(rootReducer, applyMiddleware(ReduxThunk))
+const store = createStore(rootReducer, composeWithDevTools (applyMiddleware(ReduxThunk)))
 
 export default function App() {
     return (

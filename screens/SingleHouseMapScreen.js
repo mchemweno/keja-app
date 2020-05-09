@@ -1,11 +1,9 @@
-import React, {useState, useEffect} from 'react';
-import MapView from "react-native-maps";
-import {FontAwesome} from "@expo/vector-icons";
+import React, {useEffect, useState} from 'react';
+import MapView, {Marker} from "react-native-maps";
 import Colors from "../constants/Colors";
-import MapMarker from "react-native-maps/lib/components/MapMarker";
 import MapViewDirections from "react-native-maps-directions";
 import vars from "../env";
-import {StyleSheet} from "react-native";
+import {Image, StyleSheet, View} from "react-native";
 import {useSelector} from "react-redux";
 
 
@@ -34,8 +32,6 @@ const SingleHouseMapScreen = (props) => {
         latitudeDelta: latitude_delta,
         longitudeDelta: longitude_delta
     });
-
-
 
 
     const updateMapStyle = () => {
@@ -102,7 +98,7 @@ const SingleHouseMapScreen = (props) => {
                 precision={"high"}
             />
             }
-            <MapMarker
+            <Marker
                 coordinate={{
                     latitude: house.geometry.coordinates[1],
                     longitude: house.geometry.coordinates[0]
@@ -111,12 +107,29 @@ const SingleHouseMapScreen = (props) => {
                 title={house.properties.name}
                 tracksViewChanges={true}
 
-            ><FontAwesome name={'home'} size={27} style={{color: Colors.mainColorMonochromeDark2}}/></MapMarker>
+            >
+                <View
+                    style={{
+                        height: 35,
+                        width: 35,
+                        elevation: 10,
+                        radius: 50,
+                        overflow: 'hidden'
+                    }}
+                >
+                    <Image source={require('../media/location.png')}
+                           style={{
+                               height: '100%',
+                               width: '100%',
+                           }}
+                    />
+                </View>
+            </Marker>
         </MapView>
     )
 };
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
     mapStyle: {
         flex: 1,
         marginTop: 30

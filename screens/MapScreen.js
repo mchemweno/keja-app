@@ -1,13 +1,14 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
-import {FontAwesome, Ionicons} from "@expo/vector-icons";
+import {Alert, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Ionicons, FontAwesome} from "@expo/vector-icons";
 import Search from "../components/map components/search";
 import Colors from "../constants/Colors";
-import MapMarker from "react-native-maps/lib/components/MapMarker";
 import {useDispatch, useSelector} from "react-redux";
 import MapView from "react-native-map-clustering";
 import {fetchHouses, fetchHousesCategory} from "../store/actions/houses";
-import {fetchCurrentLocation} from "../utilities/utilities";
+import {getLocationHandler} from "../utilities/utilities";
+import {Callout, Marker} from "react-native-maps";
+
 
 const MapScreen = (props) => {
     const {nearByLocation} = props.route.params;
@@ -20,7 +21,8 @@ const MapScreen = (props) => {
 
     if (category) {
         houses = useSelector(state => state.houses.housesCategory);
-    };
+    }
+    ;
 
     const height = useSelector(state => state.uiReducer.height);
     const width = useSelector(state => state.uiReducer.width);
@@ -43,6 +45,7 @@ const MapScreen = (props) => {
             longitudeDelta: latDelta * aspectRatio
         }
     }
+    ;
 
     const [region, setRegion] = useState(nearByLocationMapScreen);
 
@@ -89,15 +92,33 @@ const MapScreen = (props) => {
         }
     }, [dispatch]);
 
+    const setCurrentLocation = async () => {
+        try {
+            const {latitude, longitude} = await getLocationHandler();
+            setRegion(prevState => {
+                return {
+                    ...prevState,
+                    latitude: latitude,
+                    longitude: longitude,
+                    latitudeDelta: latitude_delta,
+                    longitudeDelta: longitude_delta
+                }
+            })
+
+
+        } catch (err) {
+            setIsSearch(true);
+            return err;
+        }
+    };
+
     useEffect(() => {
         if (nearByLocation === null) {
-            try {
-                fetchCurrentLocation(setRegion, latitude_delta, longitude_delta);
-            } catch (err) {
+            setCurrentLocation().catch((err) => {
                 Alert.alert('Disclaimer', 'Make sure your GPS and data are turned on');
-                setIsSearch(true);
-            }
-        };
+            });
+        }
+        ;
 
         fetchHousesScreen();
     }, []);
@@ -142,11 +163,11 @@ const MapScreen = (props) => {
                 loadingEnabled={true}
 
 
-                clusterColor={Colors.mainColorMonochromeDark2}
+                clusterColor={Colors.mainColor}
             >
 
                 {houses && houses.map((house) => (
-                    <MapMarker
+                    <Marker
                         key={house.id}
                         coordinate={{
                             latitude: house.geometry.coordinates[1],
@@ -162,7 +183,28 @@ const MapScreen = (props) => {
                         title={house.properties.name}
                         tracksViewChanges={true}
 
-                    ><FontAwesome name={'home'} size={27} style={{color: Colors.mainColorMonochromeDark2}}/></MapMarker>
+                        style={{
+                            height:33,
+                            width: 33
+                        }}
+                    >
+                    <View
+                        style={{
+                            height: '100%',
+                            width: '100%',
+                            elevation: 10,
+                            radius: 50,
+                            overflow: 'hidden'
+                        }}
+                    >
+                        <Image source={require('../media/location.png')}
+                        style={{
+                            height: '100%',
+                            width: '100%',
+                        }}
+                        />
+                    </View>
+                    </Marker>
                 ))
                 }
             </MapView>}

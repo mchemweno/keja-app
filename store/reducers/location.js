@@ -1,7 +1,7 @@
 import {FETCH_NEARBY_LOCATION} from "../actions/location";
 
 const initialState = {
-    nearByLocations: []
+    nearByLocations: null
 };
 
 

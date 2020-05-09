@@ -14,11 +14,11 @@ import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 import CustomText from "../components/CustomText";
 import Card from "../components/Card";
 import {useDispatch, useSelector} from "react-redux";
-import {SliderBox} from "react-native-image-slider-box";
-import {fetchHouses, fetchHousesRandom} from "../store/actions/houses";
+import {fetchHousesRandom} from "../store/actions/houses";
 import {fetchCategories} from "../store/actions/categories";
 import {fetchNearbyLocations} from "../store/actions/location";
-import {fetchCurrentLocation} from "../utilities/utilities";
+import {getLocationHandler} from "../utilities/utilities";
+import {SliderBox} from "react-native-image-slider-box";
 
 
 const HomeScreen = props => {
@@ -66,15 +66,15 @@ const HomeScreen = props => {
     }
     ;
 
-    const fetchNearbyLocationsScreen = async () => {
+    const fetchNearbyLocationsScreen = useCallback(async () => {
         try {
-            await fetchCurrentLocation(setRegion, 0, 0);
-            dispatch(fetchNearbyLocations(region.latitude, region.longitude));
-            console.log(region);
+            const {latitude, longitude} = await getLocationHandler();
+            await dispatch(fetchNearbyLocations(latitude, longitude));
         } catch (err) {
-            Alert.alert('Disclaimer', err.message)
+            return err
         }
-    };
+        ;
+    }, []);
 
     useEffect(() => {
         // const unsubscribe = props.navigation.addListener('focus', () => {
@@ -86,7 +86,7 @@ const HomeScreen = props => {
         fetchHousesScreen();
         fetchCategoriesScreen();
         fetchNearbyLocationsScreen().catch(err => {
-            Alert.alert('Disclaimer', err.message)
+            Alert.alert('Error', err.message);
         });
 
     }, []);
@@ -100,6 +100,7 @@ const HomeScreen = props => {
                         source={{uri: currentImage}}
                         style={{
                             ...styles.imageBackground,
+                            height: orientation === 'portrait' ? height / 4 : height / 2
                         }}
                         imageStyle={styles.imageStyle}
                         blurRadius={100}
@@ -169,7 +170,7 @@ const HomeScreen = props => {
                                     setCurrentImage(houseMasterImages[index])
                                 }}
                                 circleLoop
-                                autoplay={false}
+                                autoplay={true}
                                 parentWidth={width}
 
                                 resizeMethod={'resize'}
@@ -203,35 +204,39 @@ const HomeScreen = props => {
                                 <FontAwesome5 name={'location-arrow'} size={16} color={Colors.complementary}/>
                                 <CustomText style={styles.locationsText}>Nearby locations</CustomText>
                             </View>
-                            {nearByLocations.length > 0 ?
+                            {nearByLocations ?
                                 <ScrollView
                                     horizontal={true}
                                     showsHorizontalScrollIndicator={false}
                                 >
-                                    <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
-                                        {nearByLocations.map((nearByLocation) => {
-                                            return (
-                                                <TouchableOpacity
-                                                    key={nearByLocation.id}
-                                                    style={{
-                                                        ...styles.locationTouchableOpacity,
-                                                        height: orientation === 'portrait' ? height / 28 : height / 13
-                                                    }}
-                                                    onPress={() => {
-                                                        props.navigation.navigate('Map Screen', {
-                                                            nearByLocation: nearByLocation,
-                                                            category: null
-                                                        })
-                                                    }}
-                                                >
-                                                    <CustomText
-                                                        style={styles.locationText}>{nearByLocation.name}</CustomText>
-                                                </TouchableOpacity>
-                                            )
-                                        })}
-                                    </View>
+                                    {nearByLocations.length > 0 ?
+                                        <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
+                                            {nearByLocations.map((nearByLocation) => {
+                                                return (
+                                                    <TouchableOpacity
+                                                        key={nearByLocation.id}
+                                                        style={{
+                                                            ...styles.locationTouchableOpacity,
+                                                            height: orientation === 'portrait' ? height / 28 : height / 13
+                                                        }}
+                                                        onPress={() => {
+                                                            props.navigation.navigate('Map Screen', {
+                                                                nearByLocation: nearByLocation,
+                                                                category: null
+                                                            })
+                                                        }}
+                                                    >
+                                                        <CustomText
+                                                            style={styles.locationText}>{nearByLocation.name}</CustomText>
+                                                    </TouchableOpacity>
+                                                )
+                                            })}
+                                        </View> : <CustomText style={styles.noLocationText}>No places found near your
+                                            location</CustomText>}
                                 </ScrollView> :
-                                <CustomText>Make Sure your GPS is turned on to enjoy this feature</CustomText>}
+                                <CustomText style={styles.noLocationText}>Make sure data and GPS are turned on to enjoy
+                                    this
+                                    feature.</CustomText>}
                         </View>
                     </View>
 
@@ -240,7 +245,7 @@ const HomeScreen = props => {
                             <FontAwesome5 name={"binoculars"} size={16} color={Colors.complementary}/>
                             <CustomText style={styles.exploreText}>Explore Categories</CustomText>
                         </View>
-                        <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start'}}>
+                        <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingLeft: '2.5%', paddingRight: '2.5%'}}>
                             {categories &&
                             categories.map(category => {
                                 return (
@@ -252,7 +257,7 @@ const HomeScreen = props => {
 
                                             style={{
                                                 ...styles.exploreCategoriesCard,
-                                                width: width / 2.5,
+                                                width: width / 2.56,
                                                 height: orientation === 'portrait' ? height / 8 : height / 3.5,
                                             }}
                                             onPress={() => {
@@ -309,10 +314,12 @@ const styles = StyleSheet.create({
     },
     imageBackground: {
         width: '100%',
-        height: 210,
-        marginBottom: 25,
+        marginBottom: 50,
     },
     imageStyle: {},
+    noLocationText: {
+        marginLeft: 5
+    },
     menuSearchContainer: {
         marginTop: 30,
         flexDirection: 'row',
@@ -412,7 +419,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         overflow: 'hidden',
         marginVertical: '5%',
-        marginHorizontal: '3.3%',
+        marginHorizontal: '2.5%',
         marginBottom: 5
     },
     exploreImageBackground: {
