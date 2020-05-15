@@ -3,13 +3,13 @@ import {objectToFormData} from "object-to-formdata";
 export const FETCH_HOUSES = 'FETCH_HOUSES';
 export const FETCH_HOUSES_CATEGORY = 'FETCH_HOUSES_CATEGORY';
 export const FETCH_HOUSES_RANDOM = 'FETCH_HOUSES_RANDOM';
-export const CREATE_HOUSE = 'CREATE_HOUSE';
+export const SET_FILTERS= 'SET_FILTERS';
 
 
 export const domain = 'https://keja-app-backend.herokuapp.com';
 
 
-export const fetchHouses = () => {
+export const fetchHouses = (filters) => {
     return async (dispatch) => {
         let houses;
         try {
@@ -29,7 +29,8 @@ export const fetchHouses = () => {
 
             dispatch({
                 type: FETCH_HOUSES,
-                houses: houses
+                houses: houses,
+                filters: filters
             })
         } catch (err) {
             return err
@@ -120,7 +121,7 @@ const imageProcessor = (image) => {
 
 };
 
-export const fetchHousesCategory = (id) => {
+export const fetchHousesCategory = (id, filters) => {
     return async (dispatch) => {
         let houses;
         try {
@@ -140,7 +141,8 @@ export const fetchHousesCategory = (id) => {
 
             dispatch({
                 type: FETCH_HOUSES_CATEGORY,
-                houses: houses
+                houses: houses,
+                filters: filters
             })
         } catch (err) {
             return err
@@ -177,3 +179,6 @@ export const fetchHousesRandom = () => {
 
     }
 };
+
+
+

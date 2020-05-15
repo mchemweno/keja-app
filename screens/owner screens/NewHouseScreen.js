@@ -1,4 +1,4 @@
-import React, {useCallback, useReducer, useState, useEffect} from 'react';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
 import {ActivityIndicator, Alert, ScrollView, StyleSheet, View} from "react-native";
 import InputComponent from "../../components/input components/InputComponent";
 import {useDispatch, useSelector} from "react-redux";
@@ -152,9 +152,6 @@ const NewHouseScreen = props => {
     }, [dstv])
 
 
-
-
-
     return (
         <ScrollView>
             {isCreating === false ?
@@ -182,7 +179,7 @@ const NewHouseScreen = props => {
                         value={category}
                         onChange={setCategory}
                     />
-                    {category !== 1 &&
+                    {category !== 1 && category !== 6 && category !== 5 &&
                     <View>
                         <InputComponent
                             initialValue={houseForFields ? houseForFields.rooms : '0'}

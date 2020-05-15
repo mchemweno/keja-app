@@ -11,13 +11,15 @@ import uiReducer from "./store/reducers/ui";
 import categoriesReducer from "./store/reducers/categories";
 import nearByLocationsReducer from "./store/reducers/location";
 import {composeWithDevTools}  from 'redux-devtools-extension'
+import filtersReducer from "./store/reducers/filters";
 
 
 const rootReducer = combineReducers({
     houses: housesReducer,
     uiReducer: uiReducer,
     categories: categoriesReducer,
-    nearByLocations: nearByLocationsReducer
+    nearByLocations: nearByLocationsReducer,
+    filtersReducer: filtersReducer
 });
 
 enableScreens();

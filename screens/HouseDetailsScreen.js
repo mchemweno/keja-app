@@ -1,14 +1,12 @@
 import React, {useState} from 'react';
 import {Image, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
-import {SliderBox} from "react-native-image-slider-box";
 import Colors from "../constants/Colors";
 import {useSelector} from "react-redux";
 import CustomText from "../components/CustomText";
 import MapPreviewComponent from "../components/map components/MapPreviewComponents";
 import {FontAwesome5} from "@expo/vector-icons";
 import Card from "../components/Card";
-import StarRating from "react-native-star-rating";
-
+import MyImageSlider from "../components/MyImageSlider";
 
 
 const HouseDetailScreen = props => {
@@ -26,17 +24,23 @@ const HouseDetailScreen = props => {
     const width = useSelector(state => state.uiReducer.width);
     const orientation = height < width ? 'landscape' : 'portrait';
 
+    const categories = useSelector(state => state.categories.categories);
+
+    const category = categories.find(category => house.properties.category === category.id);
+
 
     return (
         <ScrollView style={styles.screen}>
             <View style={styles.sliderContainer}>
-                <SliderBox
+                <MyImageSlider
                     images={house.properties.house_images}
                     imageLoadingColor={Colors.mainColor}
-                    autoplay={false}
+                    autoplay={autoPlay}
 
-                    onCurrentImagePressed={(index) => setAutoPlay(false)}
-                    circleLoop
+                    onCurrentImagePressed={(index) => setAutoPlay(prevState => {
+                        return !prevState
+
+                    })}
                     parentWidth={width}
 
                     resizeMethod={'resize'}
@@ -68,26 +72,34 @@ const HouseDetailScreen = props => {
                                 alignItems: 'center',
                                 justifyContent: 'space-between'
                             }}>
-                                <View>
-                                    <StarRating
-                                        disabled={true}
-                                        emptyStar={'md-star-outline'}
-                                        fullStar={'md-star'}
-                                        halfStar={'md-star-half'}
-                                        iconSet={'Ionicons'}
-                                        rating={3}
-                                        maxStars={5}
-                                        fullStarColor={Colors.complementary}
-                                        emptyStarColor={Colors.complementary}
-                                        starSize={30}
-                                    />
-                                </View>
+                                {/*<View>*/}
+                                {/*    <StarRating*/}
+                                {/*        disabled={true}*/}
+                                {/*        emptyStar={'md-star-outline'}*/}
+                                {/*        fullStar={'md-star'}*/}
+                                {/*        halfStar={'md-star-half'}*/}
+                                {/*        iconSet={'Ionicons'}*/}
+                                {/*        rating={house.properties.average_rating}*/}
+                                {/*        maxStars={5}*/}
+                                {/*        fullStarColor={Colors.complementary}*/}
+                                {/*        emptyStarColor={Colors.complementary}*/}
+                                {/*        starSize={30}*/}
+                                {/*    />*/}
+                                {/*</View>*/}
                             </View>
                         </View>
-                        <CustomText style={styles.priceText}>Ksh.<CustomText
+                        <CustomText style={styles.priceText}>KES <CustomText
                             style={{...styles.priceText}}>{house.properties.price}</CustomText></CustomText>
                         <View style={styles.nameCard}>
                             <CustomText style={styles.nameText}>{house.properties.name}</CustomText>
+                            <View style={styles.categoryRoomsContainer}>
+                                <CustomText style={styles.categoryText}>{category.house_category}</CustomText>
+                                <View style={styles.bedroomContainer}>
+                                    <FontAwesome5 name={'bed'} size={16} color={Colors.grey}/>
+                                    <CustomText
+                                        style={styles.categoryText}> {house.properties.rooms === 0 ? 'No rooms' : `${house.properties.rooms} room(s)`}</CustomText>
+                                </View>
+                            </View>
                         </View>
                     </View>
                     <View style={{
@@ -158,12 +170,13 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.greyMonochromeLight2
     },
     priceText: {
-        fontSize: 25
+        fontSize: 20,
+        color: Colors.black
     },
     label: {
         fontSize: 14,
         color: Colors.grey,
-        marginHorizontal: 5
+        marginHorizontal: '1%'
     },
     ownerLabel: {
         color: Colors.grey,
@@ -175,47 +188,55 @@ const styles = StyleSheet.create({
         marginHorizontal: '8%'
     },
     nameText: {
-        fontSize: 23,
-        color: Colors.black,
-        marginHorizontal: '14%'
+        fontSize: 25,
+        color: Colors.black
     },
     imageSliderStyle: {
-        marginBottom: 5
+        marginBottom: '5%'
     },
     amenitiesCard: {
         borderBottomWidth: 0.5,
+        borderTopWidth: 0.5,
         borderColor: Colors.greyMonochromeLight2,
-        paddingVertical: 5,
-        marginHorizontal: 5
+        paddingVertical: '2%',
+        marginHorizontal: '1%'
     },
     mapPreviewContainer: {
         flex: 2,
         borderBottomWidth: 0.5,
         borderColor: Colors.greyMonochromeLight2,
-        paddingVertical: 10,
-        marginHorizontal: 5
+        paddingVertical: '2%',
+        marginHorizontal: '1%'
     },
     priceNameOwnerCard: {
-        paddingVertical: 5,
+        paddingVertical: '1%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal: '4%',
-        borderBottomWidth: 0.5,
-        borderColor: Colors.greyMonochromeLight2
+        marginHorizontal: '4%'
     },
     nameOwnerCard: {
-        paddingVertical: 5,
-        borderColor: Colors.greyMonochromeLight2,
-        borderBottomWidth: 0.5,
+        paddingVertical: '1%',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginHorizontal: 5
+        marginHorizontal: '1%'
     },
     featuresLabel: {
         marginLeft: '1%',
         fontSize: 20,
         color: Colors.grey
-    }
+    },
+    categoryText: {
+        fontSize: 16,
+        color: Colors.complementary,
+        marginRight: '10%'
+    },
+    categoryRoomsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start'
+    },
+    bedroomContainer: {
+        flexDirection: 'row'
+    },
 })
 
 export default HouseDetailScreen;

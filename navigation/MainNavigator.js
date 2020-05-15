@@ -54,7 +54,6 @@ const MainNavigator = () => {
                               headerShown: false,
                           }}
             />
-
         </Stack.Navigator>
     )
 };

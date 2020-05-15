@@ -17,8 +17,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchHousesRandom} from "../store/actions/houses";
 import {fetchCategories} from "../store/actions/categories";
 import {fetchNearbyLocations} from "../store/actions/location";
+import MyImageSlider from "../components/MyImageSlider";
 import {getLocationHandler} from "../utilities/utilities";
-import {SliderBox} from "react-native-image-slider-box";
 
 
 const HomeScreen = props => {
@@ -86,7 +86,7 @@ const HomeScreen = props => {
         fetchHousesScreen();
         fetchCategoriesScreen();
         fetchNearbyLocationsScreen().catch(err => {
-            Alert.alert('Error', err.message);
+            Alert.alert("Couldn't fetch your location", 'Make sure your GPS and data are turned on');
         });
 
     }, []);
@@ -146,7 +146,7 @@ const HomeScreen = props => {
                                         props.navigation.openDrawer()
                                     }}
                                 >
-                                    <Ionicons name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} size={40}
+                                    <Ionicons name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} size={35}
                                               color={Colors.mainColor}/>
                                 </TouchableOpacity>
                             </View>
@@ -156,45 +156,40 @@ const HomeScreen = props => {
                             height: orientation === 'portrait' ? height / 5 : height / 2.5,
 
                         }}>
-                            <SliderBox
-                                images={houseMasterImages}
-                                imageLoadingColor={Colors.mainColor}
+                           <MyImageSlider
+                               images={houseMasterImages}
+                               sliderBoxHeight={'100%'}
+
+                               onCurrentImagePressed={(index) => {
+                                   props.navigation.navigate('House Details Screen', {
+                                       house: houses[index]
+                                   })
+                               }}
+
+                               currentImageEmitter={(index) => {
+                                   setCurrentImage(houseMasterImages[index])
+                               }}
+
+                               dotColor={Colors.mainColor}
+                               inactiveDotColor={'white'}
+
+                               paginationBoxVerticalPadding={20}
+                               paginationBoxStyle={{
+                                   position: "absolute",
+                                   bottom: 0,
+                                   padding: 0,
+                                   alignItems: "center",
+                                   alignSelf: "center",
+                                   justifyContent: "center",
+                               }}
+
+                               imageLoadingColor={Colors.mainColor}
 
 
-                                onCurrentImagePressed={(index) => {
-                                    props.navigation.navigate('House Details Screen', {
-                                        house: houses[index]
-                                    })
-                                }}
-                                currentImageEmitter={(index) => {
-                                    setCurrentImage(houseMasterImages[index])
-                                }}
-                                circleLoop
-                                autoplay={true}
-                                parentWidth={width}
 
-                                resizeMethod={'resize'}
-                                resizeMode={'cover'}
-
-                                paginationBoxStyle={{
-                                    position: "absolute",
-                                    bottom: 0,
-                                    padding: 0,
-                                    alignItems: "center",
-                                    alignSelf: "center",
-                                    justifyContent: "center",
-                                }}
-
-                                dotColor={Colors.mainColor}
-                                sliderBoxHeight={'100%'}
-                                inactiveDotColor={'white'}
-
-                                ImageComponentStyle={{width: '100%'}}
-
-                                maxToRenderPerBatch={6}
-                                removeClippedSubviews={true}
-                                initialNumToRender={6}
-                            />
+                               autoplay={true}
+                               circleLoop={false}
+                           />
                         </Card>
                     </ImageBackground>
 
@@ -243,7 +238,7 @@ const HomeScreen = props => {
                     <View style={styles.exploreCardContainer}>
                         <View style={{flexDirection: 'row'}}>
                             <FontAwesome5 name={"binoculars"} size={16} color={Colors.complementary}/>
-                            <CustomText style={styles.exploreText}>Explore Categories</CustomText>
+                            <CustomText style={styles.exploreText}>What are you looking for?</CustomText>
                         </View>
                         <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingLeft: '2.5%', paddingRight: '2.5%'}}>
                             {categories &&
