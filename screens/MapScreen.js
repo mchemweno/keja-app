@@ -12,9 +12,6 @@ import FiltersComponent from "../components/FiltersComponent";
 
 
 const MapScreen = (props) => {
-    const [, updateState] = React.useState();
-    const forceUpdate = React.useCallback(() => updateState({}), []);
-
     const {nearByLocation} = props.route.params;
     const {category} = props.route.params;
 
@@ -26,12 +23,18 @@ const MapScreen = (props) => {
     const rooms = useSelector(state => state.filtersReducer.rooms);
 
 
-    let houses = useSelector(state => state.houses.houses);
+    let houses = useSelector(state => state.houses.filteredHouses);
 
     if (category) {
-        houses = useSelector(state => state.houses.housesCategory);
+        houses = useSelector(state => state.houses.filteredCategoryHouses);
     }
     ;
+
+    if (houses) {
+        if (houses.length <= 0) {
+            Alert.alert('No Houses', 'Please edit your filters.')
+        }
+    }
 
 
     const height = useSelector(state => state.uiReducer.height);
@@ -114,7 +117,7 @@ const MapScreen = (props) => {
             }
 
         } catch (err) {
-            Alert.alert('Error', err.message)
+            Alert.alert('Error', 'Check your internet connection.')
         }
     }, [dispatch]);
 
@@ -147,134 +150,124 @@ const MapScreen = (props) => {
         ;
 
         fetchHousesScreen();
-
-        const unsubscribe = props.navigation.addListener('animateIn', () => {
-            fetchHousesScreen();
-        });
-        return (() => {
-            unsubscribe();
-        })
     }, []);
 
 
     return (
         <SafeAreaView style={styles.screen}>
-            {!isFilter ?
-                <View style={{flex: 1}}>
-                    {region &&
-                    <MapView
-                        provider={"google"}
-                        region={region}
+                {region &&
+                <MapView
+                    provider={"google"}
+                    region={region}
 
-                        onMapReady={() => {
-                            updateMapStyle('100%');
-                        }}
-                        onPress={() => {
-                            setIsSearch(false);
-                        }}
-                        style={{...styles.mapStyle, width: mapWidth,}}
-                        onRegionChangeComplete={region => {
-                            setRegion((prevState) => {
-                                return (
-                                    {
-                                        ...prevState,
-                                        latitude: region.latitude,
-                                        longitude: region.longitude,
-                                        latitudeDelta: region.latitudeDelta,
-                                        longitudeDelta: region.longitudeDelta
-                                    }
-                                )
-                            });
-                        }}
+                    onMapReady={() => {
+                        updateMapStyle('100%');
+                    }}
+                    onPress={() => {
+                        setIsSearch(false);
+                        setIsFilter(false)
+                    }}
+                    style={{...styles.mapStyle, width: mapWidth,}}
+                    onRegionChangeComplete={region => {
+                        setRegion((prevState) => {
+                            return (
+                                {
+                                    ...prevState,
+                                    latitude: region.latitude,
+                                    longitude: region.longitude,
+                                    latitudeDelta: region.latitudeDelta,
+                                    longitudeDelta: region.longitudeDelta
+                                }
+                            )
+                        });
+                    }}
 
-                        zoomControlEnabled={true}
-                        showsUserLocation={true}
-                        userLocationPriority={'medium'}
-                        userLocationUpdateInterval={3000}
-                        showsBuildings={true}
-                        showsMyLocationButton={true}
-                        loadingEnabled={true}
+                    zoomControlEnabled={true}
+                    showsUserLocation={true}
+                    userLocationPriority={'medium'}
+                    userLocationUpdateInterval={3000}
+                    showsBuildings={true}
+                    showsMyLocationButton={true}
+                    loadingEnabled={true}
 
-                        clusterColor={Colors.mainColor}
-                    >
+                    clusterColor={Colors.mainColor}
+                >
 
-                        {houses && houses.map((house) => (
-                            <Marker
-                                key={house.id}
-                                coordinate={{
-                                    latitude: house.geometry.coordinates[1],
-                                    longitude: house.geometry.coordinates[0]
-                                }}
+                    {houses && houses.map((house) => (
+                        <Marker
+                            key={house.id}
+                            coordinate={{
+                                latitude: house.geometry.coordinates[1],
+                                longitude: house.geometry.coordinates[0]
+                            }}
 
 
-                                onCalloutPress={() => {
-                                    props.navigation.navigate('House Details Screen',
-                                        {house: house})
-                                }}
+                            onCalloutPress={() => {
+                                props.navigation.navigate('House Details Screen',
+                                    {house: house})
+                            }}
 
-                                title={house.properties.name}
-                                tracksViewChanges={false}
+                            title={house.properties.name}
+                            tracksViewChanges={false}
 
-                                style={{
-                                    height: 33,
-                                    width: 33
-                                }}
-                            >
-                                <View
-                                    style={{
-                                        height: '100%',
-                                        width: '100%',
-                                        elevation: 10,
-                                        radius: 50,
-                                        overflow: 'hidden'
-                                    }}
-                                >
-                                    <Image source={require('../media/location.png')}
-                                           style={{
-                                               height: '100%',
-                                               width: '100%',
-                                           }}
-                                    />
-                                </View>
-                            </Marker>
-                        ))
-                        }
-                    </MapView>}
-                    <View style={styles.searchContainer}>
-                        {
-                            isSearch ?
-                                <Search
-                                    container={{
-                                        width: orientation === 'portrait' ? 300 : 700
-                                    }}
-                                    setCoordinatesHandler={setRegionHandler}
-                                    setIsSearchHandler={setIsSearchHandler}
-                                /> :
-                                <TouchableOpacity
-                                    style={styles.touchableOpacityStyle}
-                                    onPress={() => {
-                                        setIsSearchHandler(true);
-                                    }}
-                                >
-                                    <Ionicons
-                                        name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
-                                        size={33} color={Colors.mainColor}
-                                    />
-                                </TouchableOpacity>
-                        }
-                    </View>
-                    <View style={styles.filterButtonContainer}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setIsFilter(true);
+                            style={{
+                                height: 33,
+                                width: 33
                             }}
                         >
-                            <FontAwesome5 name={'filter'} size={25} color={Colors.mainColor}/>
-                        </TouchableOpacity>
-                    </View>
-                </View> :
-                <FiltersComponent forceUpdate={forceUpdate} fetchHousesScreen={fetchHousesScreen} updateMapStyle={updateMapStyle}
-                                  setIsFilter={setIsFilter}/>}
+                            <View
+                                style={{
+                                    height: '100%',
+                                    width: '100%',
+                                    elevation: 10,
+                                    radius: 50,
+                                    overflow: 'hidden'
+                                }}
+                            >
+                                <Image source={require('../media/location.png')}
+                                       style={{
+                                           height: '100%',
+                                           width: '100%',
+                                       }}
+                                />
+                            </View>
+                        </Marker>
+                    ))
+                    }
+                </MapView>}
+                <View style={styles.searchContainer}>
+                    {
+                        isSearch ?
+                            <Search
+                                container={{
+                                    width: orientation === 'portrait' ? 300 : 700
+                                }}
+                                setCoordinatesHandler={setRegionHandler}
+                                setIsSearchHandler={setIsSearchHandler}
+                            /> :
+                            <TouchableOpacity
+                                style={styles.touchableOpacityStyle}
+                                onPress={() => {
+                                    setIsSearchHandler(true);
+                                }}
+                            >
+                                <Ionicons
+                                    name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
+                                    size={33} color={Colors.mainColor}
+                                />
+                            </TouchableOpacity>
+                    }
+                </View>
+                <View style={styles.filterButtonContainer}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setIsFilter(true);
+                        }}
+                    >
+                        <FontAwesome5 name={'filter'} size={25} color={Colors.mainColor}/>
+                    </TouchableOpacity>
+                </View>
+            {isFilter && <FiltersComponent setIsFilter={setIsFilter}/>}
         </SafeAreaView>
 
 
@@ -283,7 +276,7 @@ const MapScreen = (props) => {
 
 const styles = StyleSheet.create({
     screen: {
-        flex: 1
+        flex: 1,
     },
     mapStyle: {
         flex: 1,

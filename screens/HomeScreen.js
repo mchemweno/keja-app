@@ -100,7 +100,7 @@ const HomeScreen = props => {
                         source={{uri: currentImage}}
                         style={{
                             ...styles.imageBackground,
-                            height: orientation === 'portrait' ? height / 4 : height / 2
+                            height: orientation === 'portrait' ? height / 4 : height / 2,
                         }}
                         imageStyle={styles.imageStyle}
                         blurRadius={100}
@@ -311,7 +311,10 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 50,
     },
-    imageStyle: {},
+    imageStyle: {
+        borderBottomRightRadius: 20,
+        borderBottomLeftRadius: 20
+    },
     noLocationText: {
         marginLeft: 5
     },

@@ -38,8 +38,8 @@ const filtersReducer = (state = initialState, action) => {
             return {
                 ...state,
                 rooms: {
-                    low: action.min,
-                    high: action.max
+                    low: action.low,
+                    high: action.high
                 }
             }
         default:

@@ -15,6 +15,6 @@ export const setPriceStore = (low, high) => {
     return {type: SET_PRICE, low: low, high: high}
 };
 
-export const setRoomsStore = (min, max) => {
-    return {type: SET_ROOMS, min: min, max: max}
+export const setRoomsStore = (low, high) => {
+    return {type: SET_ROOMS, low: low, high: high}
 };
