@@ -30,7 +30,7 @@ const FiltersComponent = (props) => {
 
 
     return (
-        <View style={styles.screen}>
+        <View style={{...styles.screen}}>
             {!isLoading ?
                 <Card style={styles.cardStyles}>
                     <View style={styles.amenitiesContainerStyles}>
@@ -181,13 +181,12 @@ const styles = StyleSheet.create({
         position: 'absolute',
         height: '100%',
         width: '100%',
-        marginTop: 30,
         justifyContent: 'center',
-        paddingHorizontal: '5%',
-        backgroundColor: "rgba(255, 255, 255, 0.2)"
+        paddingHorizontal: 15,
+        backgroundColor: "rgba(255, 255, 255, 0.4)"
     },
     cardStyles: {
-        padding: '5%',
+        padding: 10,
         borderRadius: 10
     },
     amenitiesContainerStyles: {
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
     priceTextContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: '5%'
+        paddingHorizontal: 10
     },
     touchableOpacityStyles: {
         backgroundColor: Colors.mainColor,
@@ -211,8 +210,8 @@ const styles = StyleSheet.create({
     },
     touchableOpacityText: {
         color: 'white',
-        paddingVertical: '5%',
-        paddingHorizontal: '10%'
+        paddingVertical: 15,
+        paddingHorizontal: 25
     },
     sliderText: {
         color: Colors.complementary,

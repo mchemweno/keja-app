@@ -236,7 +236,7 @@ const HomeScreen = props => {
                     </View>
 
                     <View style={styles.exploreCardContainer}>
-                        <View style={{flexDirection: 'row'}}>
+                        <View style={{flexDirection: 'row', marginHorizontal: '1%'}}>
                             <FontAwesome5 name={"binoculars"} size={16} color={Colors.complementary}/>
                             <CustomText style={styles.exploreText}>What are you looking for?</CustomText>
                         </View>
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     },
     imageBackground: {
         width: '100%',
-        marginBottom: 50,
+        marginBottom: '11%',
     },
     imageStyle: {
         borderBottomRightRadius: 20,
@@ -321,13 +321,13 @@ const styles = StyleSheet.create({
     menuSearchContainer: {
         marginTop: 30,
         flexDirection: 'row',
-        marginHorizontal: 10
+        marginHorizontal: '2%'
     },
     menuTouchableOpacity: {
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1,
-        padding: 5,
+        padding: '1%',
         borderRadius: 3
     },
     menuContainer: {
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
     },
     searchCard: {
-        marginHorizontal: 5,
+        marginHorizontal: '1%',
         borderRadius: 50,
         flex: 12
     },
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     },
     searchInput: {
         flex: 6,
-        paddingLeft: 10,
+        paddingLeft: '2%',
         fontSize: 16
     },
     searchOpacity: {
@@ -356,16 +356,16 @@ const styles = StyleSheet.create({
         borderColor: Colors.greyMonochromeLight,
     },
     locationsContainer: {
-        marginTop: 5,
-        paddingBottom: 5,
-        paddingTop: 5,
-        marginHorizontal: 10,
+        marginTop: '1%',
+        paddingBottom: '1%',
+        paddingTop: '1%',
+        marginHorizontal: '2%',
         backgroundColor: 'white',
         borderRadius: 10
     },
     locationsTextContainer: {
         flexDirection: 'row',
-        marginHorizontal: 5,
+        marginHorizontal: '2%',
         alignItems: 'center'
     },
     locationsText: {
@@ -375,12 +375,12 @@ const styles = StyleSheet.create({
     },
     sliderCard: {
         borderRadius: 10,
-        marginHorizontal: 10,
+        marginHorizontal: '2%',
         overflow: 'hidden',
-        marginTop: 10,
+        marginTop: '3%',
     },
     locationsCard: {
-        marginHorizontal: 10,
+        marginHorizontal: 15,
         marginTop: 5,
         flexDirection: 'row',
 
@@ -401,24 +401,24 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     exploreCardContainer: {
-        marginTop: 5,
-        paddingHorizontal: 5,
+        marginTop: '1%',
+        paddingHorizontal: '1%',
         backgroundColor: 'white',
-        marginHorizontal: 10,
+        marginHorizontal: '2%',
         borderRadius: 10,
-        paddingVertical: 5
+        paddingVertical: '1%'
     },
     exploreText: {
         fontSize: 16,
         color: Colors.grey,
-        marginLeft: 5
+        marginLeft: '2%'
     },
     exploreCategoriesCard: {
         borderRadius: 10,
         overflow: 'hidden',
         marginVertical: '5%',
         marginHorizontal: '2.5%',
-        marginBottom: 5
+        marginBottom: '2%'
     },
     exploreImageBackground: {
         flex: 1,
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     },
     moreCategoriesText: {
         color: Colors.complementary,
-        marginLeft: 5
+        marginLeft: '1%'
     }
 })
 

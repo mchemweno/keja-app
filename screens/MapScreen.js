@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Alert, Image, SafeAreaView, StyleSheet, TouchableOpacity, View} from "react-native";
+import {Alert, Image, StyleSheet, TouchableOpacity, View} from "react-native";
 import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 import Search from "../components/map components/search";
 import Colors from "../constants/Colors";
@@ -154,121 +154,123 @@ const MapScreen = (props) => {
 
 
     return (
-        <SafeAreaView style={styles.screen}>
-                {region &&
-                <MapView
-                    provider={"google"}
-                    region={region}
+        <View style={styles.screen}>
+            {region &&
+            <MapView
+                provider={"google"}
+                region={region}
 
-                    onMapReady={() => {
-                        updateMapStyle('100%');
-                    }}
-                    onPress={() => {
-                        setIsSearch(false);
-                        setIsFilter(false)
-                    }}
-                    style={{...styles.mapStyle, width: mapWidth,}}
-                    onRegionChangeComplete={region => {
-                        setRegion((prevState) => {
-                            return (
-                                {
-                                    ...prevState,
-                                    latitude: region.latitude,
-                                    longitude: region.longitude,
-                                    latitudeDelta: region.latitudeDelta,
-                                    longitudeDelta: region.longitudeDelta
-                                }
-                            )
-                        });
-                    }}
+                onMapReady={() => {
+                    updateMapStyle('100%');
+                }}
+                onPress={() => {
+                    setIsSearch(false);
+                    setIsFilter(false)
+                }}
+                style={{...styles.mapStyle, width: mapWidth,}}
+                onRegionChangeComplete={region => {
+                    setRegion((prevState) => {
+                        return (
+                            {
+                                ...prevState,
+                                latitude: region.latitude,
+                                longitude: region.longitude,
+                                latitudeDelta: region.latitudeDelta,
+                                longitudeDelta: region.longitudeDelta
+                            }
+                        )
+                    });
+                }}
 
-                    zoomControlEnabled={true}
-                    showsUserLocation={true}
-                    userLocationPriority={'medium'}
-                    userLocationUpdateInterval={3000}
-                    showsBuildings={true}
-                    showsMyLocationButton={true}
-                    loadingEnabled={true}
+                zoomControlEnabled={!isSearch}
+                showsUserLocation={true}
+                userLocationPriority={'medium'}
+                userLocationUpdateInterval={3000}
+                showsBuildings={true}
+                showsMyLocationButton={true}
+                loadingEnabled={true}
 
-                    clusterColor={Colors.mainColor}
-                >
+                clusterColor={Colors.mainColor}
+            >
 
-                    {houses && houses.map((house) => (
-                        <Marker
-                            key={house.id}
-                            coordinate={{
-                                latitude: house.geometry.coordinates[1],
-                                longitude: house.geometry.coordinates[0]
-                            }}
+                {houses && houses.map((house) => (
+                    <Marker
+                        key={house.id}
+                        coordinate={{
+                            latitude: house.geometry.coordinates[1],
+                            longitude: house.geometry.coordinates[0]
+                        }}
 
 
-                            onCalloutPress={() => {
-                                props.navigation.navigate('House Details Screen',
-                                    {house: house})
-                            }}
+                        onCalloutPress={() => {
+                            props.navigation.navigate('House Details Screen',
+                                {house: house})
+                        }}
 
-                            title={house.properties.name}
-                            tracksViewChanges={false}
+                        title={house.properties.name}
+                        tracksViewChanges={false}
 
-                            style={{
-                                height: 33,
-                                width: 33
-                            }}
-                        >
-                            <View
-                                style={{
-                                    height: '100%',
-                                    width: '100%',
-                                    elevation: 10,
-                                    radius: 50,
-                                    overflow: 'hidden'
-                                }}
-                            >
-                                <Image source={require('../media/location.png')}
-                                       style={{
-                                           height: '100%',
-                                           width: '100%',
-                                       }}
-                                />
-                            </View>
-                        </Marker>
-                    ))
-                    }
-                </MapView>}
-                <View style={styles.searchContainer}>
-                    {
-                        isSearch ?
-                            <Search
-                                container={{
-                                    width: orientation === 'portrait' ? 300 : 700
-                                }}
-                                setCoordinatesHandler={setRegionHandler}
-                                setIsSearchHandler={setIsSearchHandler}
-                            /> :
-                            <TouchableOpacity
-                                style={styles.touchableOpacityStyle}
-                                onPress={() => {
-                                    setIsSearchHandler(true);
-                                }}
-                            >
-                                <Ionicons
-                                    name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
-                                    size={33} color={Colors.mainColor}
-                                />
-                            </TouchableOpacity>
-                    }
-                </View>
-                <View style={styles.filterButtonContainer}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setIsFilter(true);
+                        style={{
+                            height: 33,
+                            width: 33
                         }}
                     >
-                        <FontAwesome5 name={'filter'} size={25} color={Colors.mainColor}/>
-                    </TouchableOpacity>
-                </View>
+                        <View
+                            style={{
+                                height: '100%',
+                                width: '100%',
+                                elevation: 10,
+                                radius: 50,
+                                overflow: 'hidden'
+                            }}
+                        >
+                            <Image source={require('../media/location.png')}
+                                   style={{
+                                       height: '100%',
+                                       width: '100%',
+                                   }}
+                            />
+                        </View>
+                    </Marker>
+                ))
+                }
+            </MapView>}
+            {!isFilter &&
+            <View style={styles.searchContainer}>
+                {
+                    isSearch ?
+                        <Search
+                            container={{
+                                width: orientation === 'portrait' ? 300 : 700
+                            }}
+                            setCoordinatesHandler={setRegionHandler}
+                            setIsSearchHandler={setIsSearchHandler}
+                        /> :
+                        <TouchableOpacity
+                            style={styles.touchableOpacityStyle}
+                            onPress={() => {
+                                setIsSearchHandler(true);
+                            }}
+                        >
+                            <Ionicons
+                                name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
+                                size={33} color={Colors.mainColor}
+                            />
+                        </TouchableOpacity>
+                }
+            </View>}
+            {!isSearch &&
+            <View style={styles.filterButtonContainer}>
+                <TouchableOpacity
+                    onPress={() => {
+                        setIsFilter(true);
+                    }}
+                >
+                    <FontAwesome5 name={'filter'} size={25} color={Colors.mainColor}/>
+                </TouchableOpacity>
+            </View>}
             {isFilter && <FiltersComponent setIsFilter={setIsFilter}/>}
-        </SafeAreaView>
+        </View>
 
 
     )
@@ -276,16 +278,16 @@ const MapScreen = (props) => {
 
 const styles = StyleSheet.create({
     screen: {
-        flex: 1,
+        marginTop: 30,
+        flex: 1
     },
     mapStyle: {
-        flex: 1,
-        marginTop: 30
+        height: '100%'
     },
     searchContainer: {
         position: 'absolute',
-        top: '5%',
-        left: '5%',
+        top: 10,
+        left: 10,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         elevation: 5,
         borderRadius: 3,
@@ -302,8 +304,8 @@ const styles = StyleSheet.create({
     },
     filterButtonContainer: {
         position: 'absolute',
-        top: '83%',
-        left: '87%',
+        bottom: 100,
+        right: 10,
         backgroundColor: "rgba(255, 255, 255, 0.9)",
         padding: 7,
         borderColor: Colors.mainColor,
