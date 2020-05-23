@@ -2,7 +2,9 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
     ActivityIndicator,
     Alert,
+    FlatList,
     ImageBackground,
+    RefreshControl,
     ScrollView,
     StyleSheet,
     TextInput,
@@ -14,11 +16,12 @@ import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 import CustomText from "../components/CustomText";
 import Card from "../components/Card";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchHousesRandom} from "../store/actions/houses";
+import {fetchHousesRandom, fetchHousesShuffle} from "../store/actions/houses";
 import {fetchCategories} from "../store/actions/categories";
 import {fetchNearbyLocations} from "../store/actions/location";
 import MyImageSlider from "../components/MyImageSlider";
 import {getLocationHandler} from "../utilities/utilities";
+import ExploreComponent from "../components/ExploreComponent";
 
 
 const HomeScreen = props => {
@@ -26,19 +29,17 @@ const HomeScreen = props => {
     const width = useSelector(state => state.uiReducer.width);
 
     const houses = useSelector(state => state.houses.housesRandom);
+    const shuffleHouses = useSelector(state => state.houses.shuffledHouses);
     const houseMasterImages = [];
 
     const nearByLocations = useSelector(state => state.nearByLocations.nearByLocations);
 
-    const categories = useSelector(state => state.categories.categories);
 
     const dispatch = useDispatch();
     const [currentImage, setCurrentImage] = useState(houseMasterImages[0]);
-    const [region, setRegion] = useState(null);
+    const [refreshing, setRefreshing] = React.useState(false);
 
-
-    let numColumns = (width > height) ? 2 : 2;
-
+    const categories = useSelector(state => state.categories.categories);
 
     const orientation = height > width ? 'portrait' : 'landscape';
 
@@ -55,7 +56,15 @@ const HomeScreen = props => {
         try {
             await dispatch(fetchHousesRandom());
         } catch (err) {
-            Alert.alert('Error', err.message)
+            Alert.alert('Error', 'An error occurred.')
+        }
+    }, [dispatch]);
+
+    const fetchHousesShuffleScreen = useCallback(async () => {
+        try {
+            await dispatch(fetchHousesShuffle());
+        } catch (err) {
+            Alert.alert('Error', 'An error occurred.')
         }
     }, [dispatch]);
 
@@ -76,6 +85,17 @@ const HomeScreen = props => {
         ;
     }, []);
 
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchHousesScreen();
+        await fetchCategoriesScreen();
+        await fetchHousesShuffleScreen();
+        await fetchNearbyLocationsScreen().catch(err => {
+            Alert.alert("Couldn't fetch your location", 'Make sure your GPS and data are turned on');
+        });
+        setRefreshing(false);
+    };
+
     useEffect(() => {
         // const unsubscribe = props.navigation.addListener('focus', () => {
         //
@@ -85,6 +105,7 @@ const HomeScreen = props => {
         // })
         fetchHousesScreen();
         fetchCategoriesScreen();
+        fetchHousesShuffleScreen();
         fetchNearbyLocationsScreen().catch(err => {
             Alert.alert("Couldn't fetch your location", 'Make sure your GPS and data are turned on');
         });
@@ -93,199 +114,268 @@ const HomeScreen = props => {
 
 
     return (
-        <ScrollView style={styles.screen}>
-            {houses ?
+        <View style={styles.screen}>
+            {houses && shuffleHouses ?
                 <View style={{flex: 1}}>
-                    <ImageBackground
-                        source={{uri: currentImage}}
-                        style={{
-                            ...styles.imageBackground,
-                            height: orientation === 'portrait' ? height / 4 : height / 2,
-                        }}
-                        imageStyle={styles.imageStyle}
-                        blurRadius={100}
-                    >
-                        <View style={styles.menuSearchContainer}>
-                            <Card style={{
-                                ...styles.searchCard,
-                                height: orientation === 'portrait' ? height / 20 : height / 10
-                            }}>
-                                <View style={styles.searchContainer}>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            props.navigation.navigate('Map Screen', {
-                                                nearByLocation: null,
-                                                category: null
-                                            })
-                                        }}
-                                        style={styles.searchOpacity}>
-                                        <Ionicons
-                                            name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
-                                            size={25} color={Colors.mainColor}
-                                        />
-                                    </TouchableOpacity>
-                                    <TextInput
-                                        style={{
-                                            ...styles.searchInput,
-                                            height: orientation === 'portrait' ? height / 20 : height / 10
-                                        }}
-                                        placeholder={'Location?'}
-                                        onFocus={() => {
-                                            props.navigation.navigate('Map Screen', {
-                                                nearByLocation: null,
-                                                category: null
-                                            })
-                                        }}
-                                    />
-                                </View>
-                            </Card>
-                            <View style={styles.menuContainer}>
-                                <TouchableOpacity
-                                    style={styles.menuTouchableOpacity}
-                                    onPress={() => {
-                                        props.navigation.openDrawer()
-                                    }}
-                                >
-                                    <Ionicons name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} size={35}
-                                              color={Colors.mainColor}/>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                    <View style={styles.menuSearchContainer}>
                         <Card style={{
-                            ...styles.sliderCard,
-                            height: orientation === 'portrait' ? height / 5 : height / 2.5,
-
+                            ...styles.searchCard,
+                            height: orientation === 'portrait' ? height / 20 : height / 10
                         }}>
-                           <MyImageSlider
-                               images={houseMasterImages}
-                               sliderBoxHeight={'100%'}
-
-                               onCurrentImagePressed={(index) => {
-                                   props.navigation.navigate('House Details Screen', {
-                                       house: houses[index]
-                                   })
-                               }}
-
-                               currentImageEmitter={(index) => {
-                                   setCurrentImage(houseMasterImages[index])
-                               }}
-
-                               dotColor={Colors.mainColor}
-                               inactiveDotColor={'white'}
-
-                               paginationBoxVerticalPadding={20}
-                               paginationBoxStyle={{
-                                   position: "absolute",
-                                   bottom: 0,
-                                   padding: 0,
-                                   alignItems: "center",
-                                   alignSelf: "center",
-                                   justifyContent: "center",
-                               }}
-
-                               imageLoadingColor={Colors.mainColor}
-
-
-
-                               autoplay={true}
-                               circleLoop={false}
-                           />
-                        </Card>
-                    </ImageBackground>
-
-                    <View style={styles.locationsContainer}>
-                        <View>
-                            <View style={styles.locationsTextContainer}>
-                                <FontAwesome5 name={'location-arrow'} size={16} color={Colors.complementary}/>
-                                <CustomText style={styles.locationsText}>Nearby locations</CustomText>
+                            <View style={styles.searchContainer}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        props.navigation.navigate('Map Screen', {
+                                            nearByLocation: null,
+                                            category: null
+                                        })
+                                    }}
+                                    style={styles.searchOpacity}>
+                                    <Ionicons
+                                        name={Platform.OS === 'android' ? 'md-search' : 'ios-search'}
+                                        size={25} color={Colors.mainColor}
+                                    />
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={{
+                                        ...styles.searchInput,
+                                        height: orientation === 'portrait' ? height / 20 : height / 10
+                                    }}
+                                    placeholder={'Location?'}
+                                    onFocus={() => {
+                                        props.navigation.navigate('Map Screen', {
+                                            nearByLocation: null,
+                                            category: null
+                                        })
+                                    }}
+                                />
                             </View>
-                            {nearByLocations ?
-                                <ScrollView
-                                    horizontal={true}
-                                    showsHorizontalScrollIndicator={false}
-                                >
-                                    {nearByLocations.length > 0 ?
-                                        <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
-                                            {nearByLocations.map((nearByLocation) => {
-                                                return (
-                                                    <TouchableOpacity
-                                                        key={nearByLocation.id}
-                                                        style={{
-                                                            ...styles.locationTouchableOpacity,
-                                                            height: orientation === 'portrait' ? height / 28 : height / 13
-                                                        }}
-                                                        onPress={() => {
-                                                            props.navigation.navigate('Map Screen', {
-                                                                nearByLocation: nearByLocation,
-                                                                category: null
-                                                            })
-                                                        }}
-                                                    >
-                                                        <CustomText
-                                                            style={styles.locationText}>{nearByLocation.name}</CustomText>
-                                                    </TouchableOpacity>
-                                                )
-                                            })}
-                                        </View> : <CustomText style={styles.noLocationText}>No places found near your
-                                            location</CustomText>}
-                                </ScrollView> :
-                                <CustomText style={styles.noLocationText}>Make sure data and GPS are turned on to enjoy
-                                    this
-                                    feature.</CustomText>}
-                        </View>
-                    </View>
-
-                    <View style={styles.exploreCardContainer}>
-                        <View style={{flexDirection: 'row', marginHorizontal: '1%'}}>
-                            <FontAwesome5 name={"binoculars"} size={16} color={Colors.complementary}/>
-                            <CustomText style={styles.exploreText}>What are you looking for?</CustomText>
-                        </View>
-                        <View style={{flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', paddingLeft: '2.5%', paddingRight: '2.5%'}}>
-                            {categories &&
-                            categories.map(category => {
-                                return (
-                                    <View
-                                        style={{elevation: 10}}
-                                        key={category.id}
-                                    >
-                                        <TouchableOpacity
-
-                                            style={{
-                                                ...styles.exploreCategoriesCard,
-                                                width: width / 2.56,
-                                                height: orientation === 'portrait' ? height / 8 : height / 3.5,
-                                            }}
-                                            onPress={() => {
-                                                props.navigation.navigate('Map Screen', {
-                                                    nearByLocation: null,
-                                                    category: category,
-                                                })
-                                            }}
-                                        >
-                                            <ImageBackground
-                                                style={styles.exploreImageBackground}
-                                                source={require('../media/keja_images.png')}
-                                            >
-                                                <CustomText
-                                                    style={{...styles.categoryText}}>{category.house_category}</CustomText>
-                                            </ImageBackground>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            })}
-
+                        </Card>
+                        <View style={styles.menuContainer}>
                             <TouchableOpacity
-                                style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-end',
-                                    width: '100%'
+                                style={styles.menuTouchableOpacity}
+                                onPress={() => {
+                                    props.navigation.openDrawer()
                                 }}
                             >
-                                <FontAwesome5 name={'arrow-right'} size={16} color={Colors.complementary}/>
-                                <CustomText style={styles.moreCategoriesText}>more categories</CustomText>
+                                <Ionicons name={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} size={35}
+                                          color={Colors.mainColor}/>
                             </TouchableOpacity>
                         </View>
                     </View>
+                    <ScrollView
+                        style={{flex: 1}}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={[Colors.mainColor, Colors.complementary]}
+                            />
+                        }
+                    >
+                        <View>
+                            <Card style={{
+                                ...styles.sliderCard,
+                                height: orientation === 'portrait' ? height / 4.3 : height / 2.5,
+
+                            }}>
+                                <MyImageSlider
+                                    images={houseMasterImages}
+                                    sliderBoxHeight={'100%'}
+
+                                    onCurrentImagePressed={(index) => {
+                                        props.navigation.navigate('House Details Screen', {
+                                            house: houses[index]
+                                        })
+                                    }}
+
+                                    currentImageEmitter={(index) => {
+                                        setCurrentImage(houseMasterImages[index])
+                                    }}
+
+                                    parentWidth={width}
+                                    dotColor={Colors.mainColor}
+                                    inactiveDotColor={'white'}
+
+                                    resizeMethod={'resize'}
+                                    resizeMode={'cover'}
+
+                                    paginationBoxVerticalPadding={20}
+                                    paginationBoxStyle={{
+                                        alignItems: "center",
+                                        alignSelf: "center",
+                                        justifyContent: "center",
+                                    }}
+
+                                    imageLoadingColor={Colors.mainColor}
+
+
+                                    autoplay={true}
+                                    circleLoop={true}
+                                />
+                            </Card>
+
+                            <View style={styles.locationsContainer}>
+                                <View>
+                                    <View style={styles.locationsTextContainer}>
+                                        <FontAwesome5 name={'location-arrow'} size={16} color={Colors.complementary}/>
+                                        <CustomText style={styles.locationsText}>Nearby locations</CustomText>
+                                    </View>
+                                    {nearByLocations ?
+                                        <ScrollView
+                                            horizontal={true}
+                                            showsHorizontalScrollIndicator={false}
+                                        >
+                                            {nearByLocations.length > 0 ?
+                                                <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
+                                                    {nearByLocations.map((nearByLocation) => {
+                                                        return (
+                                                            <TouchableOpacity
+                                                                key={nearByLocation.id}
+                                                                style={{
+                                                                    ...styles.locationTouchableOpacity,
+                                                                    height: orientation === 'portrait' ? height / 28 : height / 13
+                                                                }}
+                                                                onPress={() => {
+                                                                    props.navigation.navigate('Map Screen', {
+                                                                        nearByLocation: nearByLocation,
+                                                                        category: null
+                                                                    })
+                                                                }}
+                                                            >
+                                                                <CustomText
+                                                                    style={styles.locationText}>{nearByLocation.name}</CustomText>
+                                                            </TouchableOpacity>
+                                                        )
+                                                    })}
+                                                </View> :
+                                                <CustomText style={styles.noLocationText}>No places found near your
+                                                    location</CustomText>}
+                                        </ScrollView> :
+                                        <CustomText style={styles.noLocationText}>Make sure data and GPS are turned on
+                                            to
+                                            enjoy
+                                            this
+                                            feature.</CustomText>}
+                                </View>
+                            </View>
+
+
+                            <View style={styles.exploreCard}>
+                                <View style={styles.exploreTitleCard}>
+                                    <Ionicons
+                                        name={Platform.OS === 'android' ? 'md-home' : 'ios-home'}
+                                        size={18}
+                                        color={Colors.complementary}/>
+                                    <CustomText style={styles.exploreTitle}>Explore houses</CustomText>
+                                </View>
+                                <FlatList
+                                    style={{
+                                        marginHorizontal: '2%'
+                                    }}
+                                    keyExtractor={item => item.id.toString()}
+                                    horizontal={true}
+                                    showsHorizontalScrollIndicator={false}
+                                    data={shuffleHouses}
+                                    initialNumToRender={2}
+                                    renderItem={(itemData) => {
+                                        return (
+                                            <ExploreComponent
+                                                navigation={props.navigation}
+                                                house={itemData.item}/>
+                                        )
+                                    }}
+                                    ListFooterComponent={() => {
+                                        return (
+                                            <View style={{
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                height: orientation === 'portrait' ? height / 4 : height / 2,
+                                                width: width / 1.6,
+                                            }}>
+                                                <TouchableOpacity
+                                                    style={{
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        backgroundColor: Colors.mainColor,
+                                                        height: 85,
+                                                        width: 85,
+                                                        borderRadius: 42.5
+                                                    }}
+                                                >
+                                                    <FontAwesome5 name={'plus'} size={16} color={'white'}/>
+                                                    <CustomText style={styles.moreText}>More Houses</CustomText>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )
+                                    }}
+                                    ListFooterComponentStyle={{
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        margin: 10
+                                    }}
+                                />
+
+                            </View>
+                            <View style={styles.whatAreYouLookingForCardContainer}>
+                                <View style={{flexDirection: 'row', marginHorizontal: '1%'}}>
+                                    <FontAwesome5 name={"binoculars"} size={16} color={Colors.complementary}/>
+                                    <CustomText style={styles.lookingForText}>What are you looking for?</CustomText>
+                                </View>
+                                <View style={{
+                                    flexDirection: 'row',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'flex-start',
+                                    paddingLeft: '2.5%',
+                                    paddingRight: '2.5%'
+                                }}>
+                                    {categories &&
+                                    categories.map(category => {
+                                        return (
+                                            <View
+                                                style={{elevation: 10}}
+                                                key={category.id}
+                                            >
+                                                <TouchableOpacity
+
+                                                    style={{
+                                                        ...styles.lookingForCategoriesCard,
+                                                        width: width / 2.45,
+                                                        height: orientation === 'portrait' ? height / 7 : height / 3.5,
+                                                    }}
+                                                    onPress={() => {
+                                                        props.navigation.navigate('Map Screen', {
+                                                            nearByLocation: null,
+                                                            category: category,
+                                                        })
+                                                    }}
+                                                >
+                                                    <ImageBackground
+                                                        style={styles.lookingForImageBackground}
+                                                        source={require('../media/keja_images.png')}
+                                                    >
+                                                        <CustomText
+                                                            style={{...styles.categoryText}}>{category.house_category}</CustomText>
+                                                    </ImageBackground>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )
+                                    })}
+
+                                    <TouchableOpacity
+                                        style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'flex-end',
+                                            width: '100%'
+                                        }}
+                                    >
+                                        <FontAwesome5 name={'arrow-right'} size={16} color={Colors.complementary}/>
+                                        <CustomText style={styles.moreCategoriesText}>more categories</CustomText>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </ScrollView>
                 </View> :
                 <View
                     style={{
@@ -294,34 +384,32 @@ const HomeScreen = props => {
                         width: width
                     }}
                 ><ActivityIndicator size={'large'} color={Colors.mainColor}/></View>}
-        </ScrollView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-
     },
     spinnerView: {
         justifyContent: 'center',
         alignItems: 'center'
     },
     imageBackground: {
+        borderWidth: 1,
         width: '100%',
-        marginBottom: '11%',
-    },
-    imageStyle: {
-        borderBottomRightRadius: 20,
-        borderBottomLeftRadius: 20
     },
     noLocationText: {
         marginLeft: 5
     },
     menuSearchContainer: {
-        marginTop: 30,
+        paddingTop: 30,
+        paddingBottom: '1%',
         flexDirection: 'row',
-        marginHorizontal: '2%'
+        paddingHorizontal: '2%',
+        backgroundColor: "rgba(235, 235, 235, 1)",
+
     },
     menuTouchableOpacity: {
         justifyContent: 'center',
@@ -371,13 +459,12 @@ const styles = StyleSheet.create({
     locationsText: {
         fontSize: 16,
         color: Colors.grey,
-        marginLeft: 5
+        marginLeft: '1%'
     },
     sliderCard: {
         borderRadius: 10,
         marginHorizontal: '2%',
-        overflow: 'hidden',
-        marginTop: '3%',
+        overflow: 'hidden'
     },
     locationsCard: {
         marginHorizontal: 15,
@@ -400,27 +487,26 @@ const styles = StyleSheet.create({
         color: Colors.mainColor,
         fontSize: 16,
     },
-    exploreCardContainer: {
-        marginTop: '1%',
+    whatAreYouLookingForCardContainer: {
         paddingHorizontal: '1%',
         backgroundColor: 'white',
         marginHorizontal: '2%',
         borderRadius: 10,
         paddingVertical: '1%'
     },
-    exploreText: {
+    lookingForText: {
         fontSize: 16,
         color: Colors.grey,
-        marginLeft: '2%'
+        marginLeft: '1%'
     },
-    exploreCategoriesCard: {
+    lookingForCategoriesCard: {
         borderRadius: 10,
         overflow: 'hidden',
-        marginVertical: '5%',
-        marginHorizontal: '2.5%',
+        marginVertical: 5,
+        marginHorizontal: '2%',
         marginBottom: '2%'
     },
-    exploreImageBackground: {
+    lookingForImageBackground: {
         flex: 1,
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
@@ -434,7 +520,28 @@ const styles = StyleSheet.create({
     moreCategoriesText: {
         color: Colors.complementary,
         marginLeft: '1%'
+    },
+    exploreCard: {
+        marginVertical: '1%',
+        backgroundColor: 'white',
+        marginHorizontal: '2%',
+        borderRadius: 10,
+    },
+    exploreTitleCard: {
+        flexDirection: 'row',
+        paddingHorizontal: '2%',
+        paddingTop: '1%'
+    },
+    exploreTitle: {
+        fontSize: 16,
+        color: Colors.grey,
+        marginLeft: '1%'
+    },
+    moreText: {
+        fontSize: 14,
+        color: 'white'
     }
+
 })
 
 

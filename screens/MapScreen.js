@@ -7,7 +7,7 @@ import {useDispatch, useSelector} from "react-redux";
 import MapView from "react-native-map-clustering";
 import {fetchHouses, fetchHousesCategory} from "../store/actions/houses";
 import {getLocationHandler} from "../utilities/utilities";
-import {Marker} from "react-native-maps";
+import {Marker, PROVIDER_GOOGLE, PROVIDER_DEFAULT} from "react-native-maps";
 import FiltersComponent from "../components/FiltersComponent";
 
 
@@ -146,8 +146,7 @@ const MapScreen = (props) => {
             setCurrentLocation().catch((err) => {
                 Alert.alert("Couldn't fetch your location", 'Make sure your GPS and data are turned on');
             });
-        }
-        ;
+        };
 
         fetchHousesScreen();
     }, []);

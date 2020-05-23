@@ -2,7 +2,9 @@ import {
     FETCH_HOUSES,
     FETCH_HOUSES_CATEGORY,
     FETCH_HOUSES_RANDOM,
-    SET_HOUSE_FILTERS, SET_CATEGORY_HOUSE_FILTERS
+    FETCH_HOUSES_SHUFFLE,
+    SET_CATEGORY_HOUSE_FILTERS,
+    SET_HOUSE_FILTERS
 } from "../actions/houses";
 
 const initialState = {
@@ -10,7 +12,8 @@ const initialState = {
     housesCategory: null,
     filteredHouses: null,
     filteredCategoryHouses: null,
-    housesRandom: null
+    housesRandom: null,
+    shuffledHouses: null,
 }
 
 
@@ -42,7 +45,7 @@ const housesReducer = (state = initialState, action) => {
             }
 
         case FETCH_HOUSES_RANDOM:
-            return  {
+            return {
                 ...state,
                 housesRandom: action.houses
             }
@@ -60,6 +63,12 @@ const housesReducer = (state = initialState, action) => {
             return {
                 ...state,
                 filteredCategoryHouses: filterCategoryHouses
+            }
+
+        case FETCH_HOUSES_SHUFFLE:
+            return {
+                ...state,
+                shuffledHouses: action.houses
             }
 
         default:
@@ -82,17 +91,16 @@ const filterMethod = (houses, filters) => {
         if (wifi && !house.properties.amenities.wifi) {
             return false
         }
-        if (house.properties.price < price.low || house.properties.price > price.high ) {
+        if (house.properties.price < price.low || house.properties.price > price.high) {
             return false
         }
-        if (house.properties.rooms < rooms.low || house.properties.rooms > rooms.high ) {
+        if (house.properties.rooms < rooms.low || house.properties.rooms > rooms.high) {
             return false
         }
         return true
     });
     return filteredHouses;
 };
-
 
 
 export default housesReducer;

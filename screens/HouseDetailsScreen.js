@@ -36,6 +36,7 @@ const HouseDetailScreen = props => {
                     images={house.properties.house_images}
                     imageLoadingColor={Colors.mainColor}
                     autoplay={autoPlay}
+                    circleLoop={true}
 
                     onCurrentImagePressed={(index) => setAutoPlay(prevState => {
                         return !prevState
