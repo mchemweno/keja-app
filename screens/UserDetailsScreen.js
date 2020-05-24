@@ -1,10 +1,20 @@
 import React, {useEffect} from 'react';
-import {Alert, FlatList, Image, ImageBackground, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
+import {
+    ActivityIndicator,
+    Alert,
+    FlatList,
+    Image,
+    ImageBackground,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View
+} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import CustomText from "../components/CustomText";
 import {FontAwesome5} from "@expo/vector-icons";
 import Colors from "../constants/Colors";
-import {fetchOwnerHouse} from "../store/actions/houses";
+import {fetchOwnerHouse, resetOwnerHouses} from "../store/actions/houses";
 import OwnerHouseComponent from "../components/OwnerHouseComponent";
 
 
@@ -30,6 +40,13 @@ const UserDetailsScreen = (props) => {
         ownerHouseHandler().catch(err => {
             Alert.alert("Couldn't fetch owner houses", 'Make sure your data is turned on');
         });
+
+        const unsubscribe = props.navigation.addListener('blur', () => {
+            dispatch(resetOwnerHouses());
+        });
+        return (() => {
+            unsubscribe();
+        })
     }, []);
 
     return (
@@ -89,6 +106,7 @@ const UserDetailsScreen = (props) => {
             </View>
             <View style={{...styles.container}}>
                 <CustomText style={styles.containerHeading}>Houses</CustomText>
+                {ownerHouses ?
                 <FlatList
                     style={{
                         paddingTop: '1%',
@@ -102,7 +120,7 @@ const UserDetailsScreen = (props) => {
                         return (
                             <OwnerHouseComponent house={itemData.item} />
                         )
-                    }}/>
+                    }}/> : <ActivityIndicator size={'large'} color={Colors.mainColor} />}
             </View>
         </ScrollView>
     )

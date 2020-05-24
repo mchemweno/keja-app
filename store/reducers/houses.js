@@ -2,7 +2,7 @@ import {
     FETCH_HOUSES,
     FETCH_HOUSES_CATEGORY,
     FETCH_HOUSES_RANDOM,
-    FETCH_HOUSES_SHUFFLE, FETCH_OWNER_HOUSES,
+    FETCH_HOUSES_SHUFFLE, FETCH_OWNER_HOUSES, RESET_OWNER_HOUSE,
     SET_CATEGORY_HOUSE_FILTERS,
     SET_HOUSE_FILTERS
 } from "../actions/houses";
@@ -76,6 +76,11 @@ const housesReducer = (state = initialState, action) => {
             return {
                 ...state,
                 ownerHouses: action.houses
+            }
+        case RESET_OWNER_HOUSE:
+            return  {
+                ...state,
+                ownerHouses: null
             }
 
         default:

@@ -7,6 +7,7 @@ export const FETCH_HOUSES_RANDOM = 'FETCH_HOUSES_RANDOM';
 export const FETCH_HOUSES_SHUFFLE = 'FETCH_HOUSES_SHUFFLE';
 export const SET_HOUSE_FILTERS = 'SET_HOUSE_FILTERS';
 export const SET_CATEGORY_HOUSE_FILTERS = 'SET_CATEGORY_HOUSE_FILTERS';
+export const RESET_OWNER_HOUSE = 'RESET_OWNER_HOUSE';
 
 
 export const domain = 'https://keja-app-backend.herokuapp.com';
@@ -238,6 +239,13 @@ export const fetchOwnerHouse = (id) => {
             return err
         }
 
+    }
+};
+
+
+export const resetOwnerHouses = () => {
+    return {
+        type: RESET_OWNER_HOUSE
     }
 };
 
