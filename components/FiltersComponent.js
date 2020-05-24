@@ -13,7 +13,7 @@ const FiltersComponent = (props) => {
     const dispatch = useDispatch();
 
     const houses = useSelector(state => state.houses.houses);
-    const houseCategory = useSelector(state => state.houses.houses);
+    const houseCategory = useSelector(state => state.houses.housesCategory);
 
 
 

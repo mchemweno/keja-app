@@ -63,7 +63,9 @@ const ExploreComponent = (props) => {
                     </ImageBackground>
                 </TouchableOpacity> : <View
                     style={{
-                        ...styles.spinnerView
+                        ...styles.spinnerView,
+                        height: orientation === 'portrait' ? height / 4 : height / 2,
+                        width: width / 1.6,
                     }}
                 ><ActivityIndicator size={'large'} color={Colors.mainColor}/></View>}
         </View>

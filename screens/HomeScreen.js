@@ -252,11 +252,7 @@ const HomeScreen = props => {
                                                 <CustomText style={styles.noLocationText}>No places found near your
                                                     location</CustomText>}
                                         </ScrollView> :
-                                        <CustomText style={styles.noLocationText}>Make sure data and GPS are turned on
-                                            to
-                                            enjoy
-                                            this
-                                            feature.</CustomText>}
+                                        <CustomText style={styles.noLocationText}>Make sure data and GPS are turned on to enjoy this feature.</CustomText>}
                                 </View>
                             </View>
 
@@ -297,13 +293,13 @@ const HomeScreen = props => {
                                                     style={{
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        backgroundColor: Colors.mainColor,
+                                                        backgroundColor: 'white',
                                                         height: 85,
                                                         width: 85,
                                                         borderRadius: 42.5
                                                     }}
                                                 >
-                                                    <FontAwesome5 name={'plus'} size={16} color={'white'}/>
+                                                    <FontAwesome5 name={'plus'} size={16} color={Colors.mainColor}/>
                                                     <CustomText style={styles.moreText}>More Houses</CustomText>
                                                 </TouchableOpacity>
                                             </View>
@@ -539,7 +535,7 @@ const styles = StyleSheet.create({
     },
     moreText: {
         fontSize: 14,
-        color: 'white'
+        color: Colors.mainColor
     }
 
 })

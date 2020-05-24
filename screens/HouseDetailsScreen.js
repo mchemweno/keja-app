@@ -1,21 +1,20 @@
-import React, {useState} from 'react';
-import {Image, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
+import React, {useState, useEffect} from 'react';
+import {ActivityIndicator, Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
 import Colors from "../constants/Colors";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import CustomText from "../components/CustomText";
 import MapPreviewComponent from "../components/map components/MapPreviewComponents";
 import {FontAwesome5} from "@expo/vector-icons";
 import Card from "../components/Card";
 import MyImageSlider from "../components/MyImageSlider";
+import {fetchOwner, resetOwner} from "../store/actions/users";
 
 
 const HouseDetailScreen = props => {
 
 
     const {house} = props.route.params;
-    props.navigation.setOptions({
-        title: house.properties.name
-    });
+    const dispatch = useDispatch();
 
     const [autoPlay, setAutoPlay] = useState(true);
 
@@ -24,9 +23,33 @@ const HouseDetailScreen = props => {
     const width = useSelector(state => state.uiReducer.width);
     const orientation = height < width ? 'landscape' : 'portrait';
 
+    const owner = useSelector(state => state.usersReducer.owner);
+
     const categories = useSelector(state => state.categories.categories);
 
     const category = categories.find(category => house.properties.category === category.id);
+
+    const fetchOwnerScreen = async () => {
+        try {
+            await dispatch(fetchOwner(house.properties.owner))
+        } catch (err) {
+           return err
+        }
+
+    };
+
+    useEffect(() => {
+        fetchOwnerScreen().catch(err => {
+            Alert.alert("Couldn't fetch owner", 'Make sure your internet is available.');
+        });
+
+        // const unsubscribe = props.navigation.addListener('blur', () => {
+        //     dispatch(resetOwner());
+        // });
+        // return (() => {
+        //     unsubscribe();
+        // })
+    }, [dispatch]);
 
 
     return (
@@ -106,17 +129,32 @@ const HouseDetailScreen = props => {
                     <View style={{
                         alignItems: 'flex-end'
                     }}>
-                        <TouchableOpacity>
+                        {owner ?
+                        <TouchableOpacity
+                            onPress={() => {
+                                props.navigation.navigate('User Detail Screen'), {
+                                    owner: owner
+                                }
+                            }}
+                        >
                             <View style={{height: 60, width: 60}}>
-                                <Image source={require('../media/16508961_10208579998673126_7136972591737547712_n.jpg')}
+                                <Image source={{uri: owner.profile_picture}}
                                        style={{
                                            height: '100%',
                                            width: '100%',
-                                           borderRadius: 50
+                                           borderRadius: 30
                                        }}
                                 />
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity>: <View
+                                style={{
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    width: 60,
+                                    height: 60
+
+                                }}
+                            ><ActivityIndicator size={'small'} color={Colors.mainColor}/></View>}
 
                         <CustomText style={styles.ownerLabel}>Owner</CustomText>
                     </View>

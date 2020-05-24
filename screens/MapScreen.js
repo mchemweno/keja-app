@@ -268,7 +268,7 @@ const MapScreen = (props) => {
                     <FontAwesome5 name={'filter'} size={25} color={Colors.mainColor}/>
                 </TouchableOpacity>
             </View>}
-            {isFilter && <FiltersComponent setIsFilter={setIsFilter}/>}
+            {isFilter && <FiltersComponent category={category} setIsFilter={setIsFilter}/>}
         </View>
 
 

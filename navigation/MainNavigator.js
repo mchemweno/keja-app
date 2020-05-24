@@ -6,6 +6,7 @@ import HomeScreen from "../screens/HomeScreen";
 import MapScreen from "../screens/MapScreen";
 import {FontAwesome5} from "@expo/vector-icons";
 import SingleHouseMapScreen from "../screens/SingleHouseMapScreen";
+import UserDetailsScreen from "../screens/UserDetailsScreen";
 
 
 const Stack = createStackNavigator();
@@ -50,6 +51,11 @@ const MainNavigator = () => {
                           }}
             />
             <Stack.Screen name='Single House Map Screen' component={SingleHouseMapScreen}
+                          options={{
+                              headerShown: false,
+                          }}
+            />
+            <Stack.Screen name='User Detail Screen' component={UserDetailsScreen}
                           options={{
                               headerShown: false,
                           }}

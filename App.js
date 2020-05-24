@@ -12,6 +12,7 @@ import categoriesReducer from "./store/reducers/categories";
 import nearByLocationsReducer from "./store/reducers/location";
 import {composeWithDevTools}  from 'redux-devtools-extension'
 import filtersReducer from "./store/reducers/filters";
+import usersReducer from "./store/reducers/users";
 
 
 const rootReducer = combineReducers({
@@ -19,7 +20,8 @@ const rootReducer = combineReducers({
     uiReducer: uiReducer,
     categories: categoriesReducer,
     nearByLocations: nearByLocationsReducer,
-    filtersReducer: filtersReducer
+    filtersReducer: filtersReducer,
+    usersReducer: usersReducer
 });
 
 enableScreens();
