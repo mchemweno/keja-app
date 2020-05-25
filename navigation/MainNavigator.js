@@ -60,6 +60,11 @@ const MainNavigator = () => {
                               headerShown: false,
                           }}
             />
+            <Stack.Screen name='House Details Screen2' component={HouseDetailScreen}
+                          options={{
+                              headerShown: false,
+                          }}
+            />
         </Stack.Navigator>
     )
 };

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, Image, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
 import Colors from "../constants/Colors";
 import {useDispatch, useSelector} from "react-redux";
@@ -7,13 +7,13 @@ import MapPreviewComponent from "../components/map components/MapPreviewComponen
 import {FontAwesome5} from "@expo/vector-icons";
 import Card from "../components/Card";
 import MyImageSlider from "../components/MyImageSlider";
-import {fetchOwner, resetOwner} from "../store/actions/users";
+import {fetchOwner} from "../store/actions/users";
 
 
 const HouseDetailScreen = props => {
 
 
-    const {house} = props.route.params;
+    const {house, fromOwner} = props.route.params;
     const dispatch = useDispatch();
 
     const [autoPlay, setAutoPlay] = useState(true);
@@ -33,7 +33,7 @@ const HouseDetailScreen = props => {
         try {
             await dispatch(fetchOwner(house.properties.owner))
         } catch (err) {
-           return err
+            return err
         }
 
     };
@@ -96,20 +96,6 @@ const HouseDetailScreen = props => {
                                 alignItems: 'center',
                                 justifyContent: 'space-between'
                             }}>
-                                {/*<View>*/}
-                                {/*    <StarRating*/}
-                                {/*        disabled={true}*/}
-                                {/*        emptyStar={'md-star-outline'}*/}
-                                {/*        fullStar={'md-star'}*/}
-                                {/*        halfStar={'md-star-half'}*/}
-                                {/*        iconSet={'Ionicons'}*/}
-                                {/*        rating={house.properties.average_rating}*/}
-                                {/*        maxStars={5}*/}
-                                {/*        fullStarColor={Colors.complementary}*/}
-                                {/*        emptyStarColor={Colors.complementary}*/}
-                                {/*        starSize={30}*/}
-                                {/*    />*/}
-                                {/*</View>*/}
                             </View>
                         </View>
                         <CustomText style={styles.priceText}>KES <CustomText
@@ -126,27 +112,28 @@ const HouseDetailScreen = props => {
                             </View>
                         </View>
                     </View>
+                    {!fromOwner &&
                     <View style={{
                         alignItems: 'flex-end'
                     }}>
                         {owner ?
-                        <TouchableOpacity
-                            onPress={() => {
-                                props.navigation.navigate('User Detail Screen'), {
-                                    owner: owner
-                                }
-                            }}
-                        >
-                            <View style={{height: 60, width: 60}}>
-                                <Image source={{uri: owner.profile_picture}}
-                                       style={{
-                                           height: '100%',
-                                           width: '100%',
-                                           borderRadius: 30
-                                       }}
-                                />
-                            </View>
-                        </TouchableOpacity>: <View
+                            <TouchableOpacity
+                                onPress={() => {
+                                    props.navigation.navigate('User Detail Screen'), {
+                                        owner: owner
+                                    }
+                                }}
+                            >
+                                <View style={{height: 60, width: 60}}>
+                                    <Image source={{uri: owner.profile_picture}}
+                                           style={{
+                                               height: '100%',
+                                               width: '100%',
+                                               borderRadius: 30
+                                           }}
+                                    />
+                                </View>
+                            </TouchableOpacity> : <View
                                 style={{
                                     justifyContent: 'center',
                                     alignItems: 'center',
@@ -157,7 +144,7 @@ const HouseDetailScreen = props => {
                             ><ActivityIndicator size={'small'} color={Colors.mainColor}/></View>}
 
                         <CustomText style={styles.ownerLabel}>Owner</CustomText>
-                    </View>
+                    </View>}
                 </View>
                 <View style={styles.amenitiesCard}>
                     <View style={{flexDirection: 'row'}}>

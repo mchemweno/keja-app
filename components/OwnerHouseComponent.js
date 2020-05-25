@@ -20,11 +20,20 @@ const OwnerHouseComponent = (props) => {
     }
     return (
         <Card>
-            <TouchableOpacity style={{
-                ...styles.container,
-                height: orientation === 'portrait' ? height / 3.3 : height / 1.7,
-                width: orientation === 'portrait' ? width / 1.5 : width / 1.9,
-            }}>
+            <TouchableOpacity
+                style={{
+                    ...styles.container,
+                    height: orientation === 'portrait' ? height / 3.3 : height / 1.7,
+                    width: orientation === 'portrait' ? width / 1.5 : width / 1.9,
+                }}
+                onPress={() => {
+                    props.navigation.navigate('House Details Screen2',
+                        {
+                            house: house,
+                            fromOwner: true
+                        })
+                }}
+            >
                 <View style={{
                     ...styles.imageContainer,
                     height: orientation === 'portrait' ? height / 4.5 : height / 2.3,

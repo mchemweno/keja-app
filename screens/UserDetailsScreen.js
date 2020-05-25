@@ -41,12 +41,12 @@ const UserDetailsScreen = (props) => {
             Alert.alert("Couldn't fetch owner houses", 'Make sure your data is turned on');
         });
 
-        const unsubscribe = props.navigation.addListener('blur', () => {
-            dispatch(resetOwnerHouses());
-        });
-        return (() => {
-            unsubscribe();
-        })
+        // const unsubscribe = props.navigation.addListener('blur', () => {
+        //     dispatch(resetOwnerHouses());
+        // });
+        // return (() => {
+        //     unsubscribe();
+        // })
     }, []);
 
     return (
@@ -118,7 +118,10 @@ const UserDetailsScreen = (props) => {
                     keyExtractor={(item, index) => item.id.toString()}
                     renderItem={(itemData) => {
                         return (
-                            <OwnerHouseComponent house={itemData.item} />
+                            <OwnerHouseComponent
+                                house={itemData.item}
+                                navigation={props.navigation}
+                            />
                         )
                     }}/> : <ActivityIndicator size={'large'} color={Colors.mainColor} />}
             </View>

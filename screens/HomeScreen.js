@@ -185,7 +185,8 @@ const HomeScreen = props => {
 
                                     onCurrentImagePressed={(index) => {
                                         props.navigation.navigate('House Details Screen', {
-                                            house: houses[index]
+                                            house: houses[index],
+                                            fromOwner: false
                                         })
                                     }}
 
@@ -387,6 +388,7 @@ const HomeScreen = props => {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
+        marginBottom: '1%'
     },
     spinnerView: {
         justifyContent: 'center',
@@ -520,7 +522,7 @@ const styles = StyleSheet.create({
     exploreCard: {
         marginVertical: '1%',
         backgroundColor: 'white',
-        marginHorizontal: '2%',
+        marginTop: '2%',
         borderRadius: 10,
     },
     exploreTitleCard: {

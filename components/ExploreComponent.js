@@ -28,7 +28,8 @@ const ExploreComponent = (props) => {
                     }}
                     onPress={() => {
                         props.navigation.navigate('House Details Screen', {
-                            house: house
+                            house: house,
+                            fromOwner: false
                         })
                     }}
                 >
