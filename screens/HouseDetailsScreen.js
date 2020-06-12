@@ -125,7 +125,7 @@ const HouseDetailScreen = props => {
                                 }}
                             >
                                 <View style={{height: 60, width: 60}}>
-                                    <Image source={{uri: owner.profile_picture}}
+                                    <Image source={{uri: owner.picture}}
                                            style={{
                                                height: '100%',
                                                width: '100%',

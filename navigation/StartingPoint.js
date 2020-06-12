@@ -5,6 +5,7 @@ import {setDimensions} from "../store/actions/ui";
 import {useDispatch} from "react-redux";
 import {Dimensions} from 'react-native'
 import KejaAppDrawer from "./KejaAppDrawer";
+import AuthNavigator from "./AuthNavigator";
 
 
 
@@ -28,7 +29,8 @@ const StartingPoint = props => {
 
     return (
         <NavigationContainer>
-           <KejaAppDrawer/>
+           {/*<KejaAppDrawer/>*/}
+           <AuthNavigator/>
         </NavigationContainer>
     )
 

@@ -1,6 +1,7 @@
 import React, {useEffect, useReducer} from "react";
 import {StyleSheet, TextInput, View} from "react-native";
 import CustomText from "../CustomText";
+import Colors from "../../constants/Colors";
 
 const INPUT_CHANGE = 'INPUT_CHANGE';
 const INPUT_BLUR = 'INPUT_BLUR';
@@ -45,11 +46,15 @@ const InputComponent = props => {
     const textChangeHandler = text => {
 
         const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/;
         let isValid = true;
         if (props.required && text.trim().length === 0) {
             isValid = false;
         }
         if (props.email && !emailRegex.test(text.toLowerCase())) {
+            isValid = false;
+        }
+        if (props.passwordValidation && !passwordRegex.test(text)) {
             isValid = false;
         }
         if (props.min != null && +text < props.min) {
@@ -76,23 +81,21 @@ const InputComponent = props => {
     return (
         <View>
             <View style={styles.inputsContainer}>
-                <CustomText style={styles.labelStyle}>{props.label}:</CustomText>
                 <TextInput
-                    placeholder={props.label}
                     {...props}
                     value={inputState.value}
                     onChangeText={text => {
                         textChangeHandler(text);
                     }}
                     onBlur={lostFocusHandler}
-                    style={styles.inputStyle}
+                    style={{...styles.inputStyle, fontSize: props.inputSize}}
 
                     underlineColorAndroid='transparent'
                 />
             </View>
             {!inputState.isValid && inputState.touched &&
             <View style={styles.errorContainer}>
-                <CustomText style={styles.textStyle}>Enter Valid {props.label}</CustomText>
+                <CustomText style={styles.textStyle}>Enter valid {props.placeholder}</CustomText>
             </View>
             }
         </View>
@@ -103,29 +106,21 @@ const styles = StyleSheet.create({
     inputStyleContainer: {},
     inputsContainer: {
         flexDirection: 'row',
-        margin: '1%'
+        borderBottomWidth: 1,
+        borderColor: Colors.greyMonochromeLight2
     },
     errorContainer: {
         borderRadius: 10,
         alignItems: 'center',
-        margin: '3%',
-        justifyContent: 'center'
+        margin: '1%',
+        justifyContent: 'center',
     },
     textStyle: {
-        borderRadius: 10,
         color: 'red',
-        backgroundColor: '#D3D3D3',
-        width: '45%',
-        textAlign: 'center'
-    },
-    labelStyle: {
-        fontSize: 20,
-        flex: 1,
-        paddingTop: '1%'
+        textAlign: 'center',
     },
     inputStyle: {
-        flex: 3,
-        fontSize: 17
+        flex: 1
     }
 });
 

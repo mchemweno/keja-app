@@ -66,7 +66,7 @@ const UserDetailsScreen = (props) => {
                     ...styles.imageStyle
                 }}>
                     <Image
-                        source={{uri: owner.profile_picture}}
+                        source={{uri: owner.picture}}
                         style={{
                             flex: 1,
                             borderRadius: 200,
