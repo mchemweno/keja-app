@@ -1,6 +1,6 @@
 import {objectToFormData} from "object-to-formdata";
 import domain from "../../constants/Domain";
-
+import {imageProcessor} from "../../utilities/utilities";
 
 
 export const loginSocial = (token, backend) => {
@@ -87,6 +87,60 @@ export const resetPassword = (email) => {
                 throw new Error("Something went wrong");
             }
 
+
+        } catch (err) {
+            throw err
+        }
+    }
+
+};
+
+export const createUser = (username, email, firstName, lastName, image, password, re_password) => {
+
+    const myObj = {
+        username: username,
+        email: email,
+        first_name: firstName,
+        last_name: lastName,
+        password: password,
+        re_password: re_password
+    };
+    const formData = objectToFormData(myObj);
+    if (image) {
+        const pic = imageProcessor(image);
+        formData.append("picture", pic, pic.name);
+    }
+
+    return async (dispatch) => {
+        try {
+            const response = await fetch(`${domain}/houses/users/`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formData
+            })
+            if (response.status != 201) {
+                const resData = await response.json();
+                console.log(resData);
+                if (resData.email) {
+                    throw new Error(resData.email[0]);
+                }
+                if (resData.username) {
+                    throw new Error(resData.username[0]);
+                }
+                if (resData.password) {
+                    console.log(resData);
+                    throw new Error(resData.password[0]);
+                }
+                if (resData.non_field_errors) {
+                    throw new Error(resData.non_field_errors[0]);
+                }
+            }
+
+            const resData = await response.json();
+            console.log(resData);
 
         } catch (err) {
             throw err

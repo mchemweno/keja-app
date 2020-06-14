@@ -138,7 +138,23 @@ export const logInFacebook = async () => {
     } catch ({message}) {
         throw new Error(message);
     }
-}
+};
+
+export const imageProcessor = (image) => {
+
+
+    const imageName = image.uri.split('/').pop();
+    const imageType = 'image/' + imageName.split('.').pop();
+
+    const pic = {
+        name: imageName,
+        type: imageType,
+        uri: image.uri
+    }
+
+    return pic
+
+};
 
 
 

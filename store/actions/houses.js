@@ -1,5 +1,6 @@
 import {objectToFormData} from "object-to-formdata";
 import domain from "../../constants/Domain";
+import {imageProcessor} from "../../utilities/utilities";
 
 export const FETCH_HOUSES = 'FETCH_HOUSES';
 export const FETCH_OWNER_HOUSES = 'FETCH_OWNER_HOUSES';
@@ -110,21 +111,7 @@ export const createHouse = (name, category, rooms, price, location, wifi, dstv, 
 };
 
 
-const imageProcessor = (image) => {
 
-
-    const imageName = image.uri.split('/').pop();
-    const imageType = 'image/' + imageName.split('.').pop();
-
-    const pic = {
-        name: imageName,
-        type: imageType,
-        uri: image.uri
-    }
-
-    return pic
-
-};
 
 export const fetchHousesCategory = (id, filters) => {
     return async (dispatch) => {
