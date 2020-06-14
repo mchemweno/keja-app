@@ -1,6 +1,7 @@
 import {objectToFormData} from "object-to-formdata";
+import domain from "../../constants/Domain";
 
-export const domain = 'https://keja-app-backend.herokuapp.com';
+
 
 export const loginSocial = (token, backend) => {
     const myObj = {
@@ -58,6 +59,34 @@ export const loginNormal = (username, password) => {
 
             const resData = await response.json();
             console.log(resData);
+
+        } catch (err) {
+            throw err
+        }
+    }
+
+};
+
+export const resetPassword = (email) => {
+    const myObj = {
+        email: email
+    };
+    const formData = objectToFormData(myObj);
+
+    return async (dispatch) => {
+        try {
+            const response = await fetch(`${domain}/houses/users/reset_password/`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formData
+            })
+            if (response.status != 204) {
+                throw new Error("Something went wrong");
+            }
+
 
         } catch (err) {
             throw err

@@ -11,36 +11,8 @@ import Colors from "../../constants/Colors";
 import CustomFontAwesomeHeaderButton from "../../components/CustomFontAwesomeHeaderButton";
 import ImageSelector from "../../components/image components/ImageSelector";
 import ImageItem from "../../components/image components/ImageItem";
-
-const FORM_UPDATE = 'FORM_UPDATE';
-
-const formReducer = (state, action) => {
-    if (action.type === FORM_UPDATE) {
-        const updatedValues = {
-            ...state.inputValues,
-            [action.input]: action.value
-        };
-
-        const updatedValidities = {
-            ...state.inputValidities,
-            [action.input]: action.isValid
-        }
-
-        let updatedFormIsValid = true;
-
-        for (const key in updatedValidities) {
-            updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-        }
-
-        return {
-            formIsValid: updatedFormIsValid,
-            inputValues: updatedValues,
-            inputValidities: updatedValidities
-        }
-    }
-
-    return state;
-};
+import {FORM_UPDATE, formReducer} from "../../utilities/formReducer";
+import CustomText from "../../components/CustomText";
 
 
 const NewHouseScreen = props => {
@@ -157,6 +129,7 @@ const NewHouseScreen = props => {
             {isCreating === false ?
                 <View>
                     <View>
+                        <CustomText>Name:</CustomText>
                         <InputComponent
                             initialValue={houseForFields ? houseForFields.name : ''}
                             initialValidity={!!houseForFields}
@@ -164,7 +137,7 @@ const NewHouseScreen = props => {
                             required
                             minLength={5}
 
-                            label={'Name'}
+                            placeholder={'name'}
                             id={'name'}
 
                             onInputChange={inputChangeHandler}
@@ -181,6 +154,7 @@ const NewHouseScreen = props => {
                     />
                     {category !== 1 && category !== 6 && category !== 5 &&
                     <View>
+                        <CustomText>Rooms:</CustomText>
                         <InputComponent
                             initialValue={houseForFields ? houseForFields.rooms : '0'}
                             initialValidity={!!houseForFields}
@@ -188,7 +162,7 @@ const NewHouseScreen = props => {
                             required
                             number
 
-                            label={'Rooms'}
+                            placeholder={'Rooms'}
                             id={'rooms'}
 
                             onInputChange={inputChangeHandler}
@@ -200,6 +174,7 @@ const NewHouseScreen = props => {
                     </View>
                     }
                     <View>
+                        <CustomText>Price:</CustomText>
                         <InputComponent
                             initialValue={houseForFields ? houseForFields.price : ''}
                             initialValidity={!!houseForFields}
@@ -207,7 +182,7 @@ const NewHouseScreen = props => {
                             required
                             number
 
-                            label={'Price'}
+                            placeholder={'price'}
                             id={'price'}
                             min={5000}
 
@@ -234,7 +209,7 @@ const NewHouseScreen = props => {
                         height: orientation === 'portrait' ? height / 3.6 : height / 1.9
                     }}>
                         <ScrollView style={{flex: 1}} horizontal={true}>
-                            {images.length > 0 && images.map((image, index) => <ImageItem key={index} image={image}/>)}
+                            {images.length > 0 && images.map((image, index) => <View key={index} style={{height: height/4, width: width/2}}><ImageItem  image={image}/></View>)}
                             <ImageSelector setImages={setImages}/>
                         </ScrollView>
 

@@ -51,7 +51,7 @@ const InputComponent = props => {
         if (props.required && text.trim().length === 0) {
             isValid = false;
         }
-        if (props.email && !emailRegex.test(text.toLowerCase())) {
+        if (props.email && !emailRegex.test(text.trim().toLowerCase())) {
             isValid = false;
         }
         if (props.passwordValidation && !passwordRegex.test(text)) {
@@ -79,7 +79,7 @@ const InputComponent = props => {
     }
 
     return (
-        <View>
+        <View style={{flex: 1}}>
             <View style={styles.inputsContainer}>
                 <TextInput
                     {...props}
@@ -95,7 +95,7 @@ const InputComponent = props => {
             </View>
             {!inputState.isValid && inputState.touched &&
             <View style={styles.errorContainer}>
-                <CustomText style={styles.textStyle}>Enter valid {props.placeholder}</CustomText>
+                <CustomText style={styles.textStyle}>Enter Valid {props.placeholder}</CustomText>
             </View>
             }
         </View>

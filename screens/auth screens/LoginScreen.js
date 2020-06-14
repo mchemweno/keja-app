@@ -7,36 +7,9 @@ import {FontAwesome5} from "@expo/vector-icons";
 import {useDispatch, useSelector} from "react-redux";
 import {logInFacebook, signInWithGoogleAsync} from "../../utilities/utilities";
 import {loginNormal, loginSocial} from "../../store/actions/auth";
+import {FORM_UPDATE, formReducer} from "../../utilities/formReducer";
 
-const FORM_UPDATE = 'FORM_UPDATE';
 
-const formReducer = (state, action) => {
-    if (action.type === FORM_UPDATE) {
-        const updatedValues = {
-            ...state.inputValues,
-            [action.input]: action.value
-        };
-
-        const updatedValidities = {
-            ...state.inputValidities,
-            [action.input]: action.isValid
-        }
-
-        let updatedFormIsValid = true;
-
-        for (const key in updatedValidities) {
-            updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-        }
-
-        return {
-            formIsValid: updatedFormIsValid,
-            inputValues: updatedValues,
-            inputValidities: updatedValidities
-        }
-    }
-
-    return state;
-};
 
 const LoginScreen = (props) => {
     const height = useSelector(state => state.uiReducer.height);
@@ -119,6 +92,7 @@ const LoginScreen = (props) => {
             style={{
                 ...styles.screen
             }}
+            keyboardDismissMode="on-drag"
         >
             {!isLoading ?
                 <View>
@@ -135,6 +109,7 @@ const LoginScreen = (props) => {
 
                             placeholder={'Username or Email'}
                             id={'username'}
+                            keyboardType="email-address"
 
                             onInputChange={inputChangeHandler}
                             inputSize={20}
@@ -160,7 +135,12 @@ const LoginScreen = (props) => {
                             inputSize={20}
                         />
                     </View>
-                    <TouchableOpacity style={{marginTop: '2%'}}>
+                    <TouchableOpacity
+                        style={{marginVertical: '2%'}}
+                        onPress={() => {
+                            props.navigation.navigate('Forgot Password Screen')
+                        }}
+                    >
                         <CustomText style={styles.forgotPasswordText}>Forgot your password?</CustomText>
                     </TouchableOpacity>
                     <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
@@ -173,6 +153,17 @@ const LoginScreen = (props) => {
                             disabled={!formState.formIsValid}
                         >
                             <CustomText style={styles.signInText}>Login</CustomText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={{
+                                ...styles.signIn,
+                                backgroundColor: Colors.mainColor
+                            }}
+                            onPress={() => {
+                                props.navigation.navigate('Create User Screen')
+                            }}
+                        >
+                            <CustomText style={styles.signInText}>Sign Up</CustomText>
                         </TouchableOpacity>
                     </View>
                     <View
@@ -236,7 +227,7 @@ const styles = StyleSheet.create({
     signIn: {
         padding: '3%',
         margin: '2%',
-        width: '100%',
+        flex: 1,
         alignItems: 'center',
         borderRadius: 10
     },

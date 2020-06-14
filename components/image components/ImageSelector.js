@@ -1,8 +1,10 @@
 import React from 'react';
-import {Alert, Button, StyleSheet, View} from "react-native";
+import {Alert, Button, StyleSheet, TouchableOpacity, View} from "react-native";
 import Colors from "../../constants/Colors";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from 'expo-image-picker';
+import CustomText from "../CustomText";
+import {FontAwesome5} from "@expo/vector-icons";
 
 
 const ImageSelector = props => {
@@ -46,7 +48,7 @@ const ImageSelector = props => {
         })
 
         if (image.uri !== undefined) {
-            props.setImages(prevState => [...prevState, image]);
+            props.setImage(image);
         }
     };
     const selectImageFromGallery = async () => {
@@ -63,22 +65,45 @@ const ImageSelector = props => {
         })
 
         if (image.uri !== undefined) {
-            props.setImages(prevState => [...prevState, image]);
+            props.setImage(image);
         }
     };
 
 
     return (
         <View style={styles.pickerContainer}>
-            <Button title={"Take Image"} color={Colors.secondary} onPress={takeImageHandler}/>
-            <Button title={"Select From Gallery"} color={Colors.secondary} onPress={selectImageFromGallery}/>
+            <TouchableOpacity
+                onPress={takeImageHandler}
+                style={styles.opacityContainer}
+            >
+                <FontAwesome5 name={"camera"} size={16} color={'white'}/>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={selectImageFromGallery}
+                style={styles.opacityContainer}
+            >
+                <FontAwesome5 name={"image"} size={16} color={'white'}/>
+            </TouchableOpacity>
         </View>
     )
 };
 
 const styles = StyleSheet.create({
     pickerContainer: {
-        justifyContent: 'space-around'
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    },
+    textStyle: {
+        color: 'white'
+    },
+    opacityContainer: {
+        backgroundColor: Colors.mainColor,
+        flex: 1,
+        marginHorizontal: '10%',
+        marginVertical: '2%',
+        padding: '2%',
+        alignItems: 'center',
+        borderRadius: 10
     }
 })
 

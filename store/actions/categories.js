@@ -1,4 +1,5 @@
-import {domain} from "./houses";
+import domain from "../../constants/Domain";
+
 
 export const FETCH_CATEGORIES = 'FETCH_CATEGORIES';
 

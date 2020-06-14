@@ -12,8 +12,7 @@ const ImageItem = (props) => {
 
 const styles = StyleSheet.create({
     imageContainer: {
-        height: 200,
-        width: 300,
+        flex: 1,
         padding: '1%',
         overflow: 'hidden'
     },

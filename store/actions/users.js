@@ -1,7 +1,7 @@
+import domain from "../../constants/Domain";
 
 export const FETCH_OWNER = 'FETCH_OWNER';
 export const RESET_OWNER = 'RESET_OWNER';
-export const domain = 'https://keja-app-backend.herokuapp.com';
 
 export const fetchOwner = (id) => {
     return async (dispatch) => {

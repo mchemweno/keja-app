@@ -1,4 +1,5 @@
 import {objectToFormData} from "object-to-formdata";
+import domain from "../../constants/Domain";
 
 export const FETCH_HOUSES = 'FETCH_HOUSES';
 export const FETCH_OWNER_HOUSES = 'FETCH_OWNER_HOUSES';
@@ -10,7 +11,7 @@ export const SET_CATEGORY_HOUSE_FILTERS = 'SET_CATEGORY_HOUSE_FILTERS';
 export const RESET_OWNER_HOUSE = 'RESET_OWNER_HOUSE';
 
 
-export const domain = 'https://keja-app-backend.herokuapp.com';
+
 
 
 export const fetchHouses = (filters) => {
