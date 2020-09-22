@@ -1,7 +1,6 @@
 import * as Permissions from "expo-permissions";
 import {Alert} from "react-native";
 import * as Location from "expo-location";
-import {fetchHouses, fetchHousesCategory} from "../store/actions/houses";
 import * as Google from "expo-google-app-auth";
 import * as Facebook from "expo-facebook";
 
@@ -64,33 +63,6 @@ export const getLocationHandler = async () => {
 
 };
 
-export const fetchHousesScreen = async (category, rooms, price, dstv, wifi) => {
-    try {
-        if (category) {
-            await dispatch(
-                fetchHousesCategory(category.id,
-                    {
-                        rooms: rooms,
-                        price: price,
-                        dstv: dstv,
-                        wifi: wifi
-                    }
-                ));
-        } else {
-            await dispatch(fetchHouses(
-                {
-                    rooms: rooms,
-                    price: price,
-                    dstv: dstv,
-                    wifi: wifi
-                }
-            ));
-        }
-
-    } catch (err) {
-        return err
-    }
-};
 
 export const signInWithGoogleAsync = async () => {
     try {

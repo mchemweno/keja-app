@@ -29,8 +29,8 @@ const StartingPoint = props => {
 
     return (
         <NavigationContainer>
-           {/*<KejaAppDrawer/>*/}
-           <AuthNavigator/>
+           <KejaAppDrawer/>
+           {/*<AuthNavigator/>*/}
         </NavigationContainer>
     )
 

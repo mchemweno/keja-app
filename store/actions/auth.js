@@ -54,7 +54,13 @@ export const loginNormal = (username, password) => {
                 body: formData
             })
             if (response.status != 200) {
-                throw new Error("Something went wrong");
+                const resData = await response.json();
+                if (resData.non_field_errors) {
+                    throw new Error(resData.non_field_errors[0]);
+                } else {
+                    throw new Error("Something went wrong");
+                }
+
             }
 
             const resData = await response.json();
@@ -84,7 +90,8 @@ export const resetPassword = (email) => {
                 body: formData
             })
             if (response.status != 204) {
-                throw new Error("Something went wrong");
+                const resData = await response.json();
+                throw new Error(resData[0]);
             }
 
 
@@ -136,6 +143,8 @@ export const createUser = (username, email, firstName, lastName, image, password
                 }
                 if (resData.non_field_errors) {
                     throw new Error(resData.non_field_errors[0]);
+                } else {
+                    throw new Error('Something went terribly wrong.');
                 }
             }
 

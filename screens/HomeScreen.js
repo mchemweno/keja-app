@@ -229,10 +229,10 @@ const HomeScreen = props => {
                                         >
                                             {nearByLocations.length > 0 ?
                                                 <View style={{justifyContent: 'flex-start', ...styles.locationsCard,}}>
-                                                    {nearByLocations.map((nearByLocation) => {
+                                                    {nearByLocations.map((nearByLocation, index) => {
                                                         return (
                                                             <TouchableOpacity
-                                                                key={nearByLocation.id}
+                                                                key={index}
                                                                 style={{
                                                                     ...styles.locationTouchableOpacity,
                                                                     height: orientation === 'portrait' ? height / 28 : height / 13

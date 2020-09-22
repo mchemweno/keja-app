@@ -82,7 +82,10 @@ const LoginScreen = (props) => {
         try {
             await dispatch(loginNormal(formState.inputValues.username, formState.inputValues.password))
         } catch (err) {
-            console.log('hhaha')
+            Alert.alert(
+                'Error',
+                err.message
+            );
         }
         setIsLoading(false);
     };

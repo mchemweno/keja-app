@@ -1,9 +1,8 @@
 import React from 'react';
-import {Alert, Button, StyleSheet, TouchableOpacity, View} from "react-native";
+import {Alert, StyleSheet, TouchableOpacity, View} from "react-native";
 import Colors from "../../constants/Colors";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from 'expo-image-picker';
-import CustomText from "../CustomText";
 import {FontAwesome5} from "@expo/vector-icons";
 
 
@@ -61,7 +60,8 @@ const ImageSelector = props => {
         const image = await ImagePicker.launchImageLibraryAsync({
             allowsEditing: true,
             aspect: [16, 9],
-            quality: 0.8
+            quality: 0.8,
+            allowsMultipleSelection: true
         })
 
         if (image.uri !== undefined) {
